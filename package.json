@@ -18,9 +18,9 @@
   },
   "homepage": "https://github.com/SteveXCIV/cap-w2-kinect-speech-server#readme",
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-clean": "^0.3.2",
-    "gulp-typescript": "^3.1.4",
-    "typescript": "^2.1.5"
+    "gulp": "3.9.1",
+    "gulp-clean": "0.3.2",
+    "gulp-typescript": "3.1.4",
+    "typescript": "2.1.5"
   }
 }
