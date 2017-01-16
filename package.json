@@ -1,0 +1,23 @@
+{
+  "name": "cap-w2-kinect-speech-server",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SteveXCIV/cap-w2-kinect-speech-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SteveXCIV/cap-w2-kinect-speech-server/issues"
+  },
+  "homepage": "https://github.com/SteveXCIV/cap-w2-kinect-speech-server#readme",
+  "devDependencies": {
+    "typescript": "^2.1.5"
+  }
+}
