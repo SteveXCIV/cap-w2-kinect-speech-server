@@ -2,7 +2,7 @@
   "name": "cap-w2-kinect-speech-server",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "build/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
