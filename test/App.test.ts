@@ -7,20 +7,31 @@ import App from '../src/App';
 chai.use(chaiHttp);
 const expect = chai.expect;
 
-describe('baseRoute', () => {
+describe('GET /api/v1/sessions', () => {
 
-    it('should return a JSON type message', () => {
-        chai.request(App).get('/')
-        .then(res => {
-            expect(res.type).to.eql('application/json');
-        });
+    it('should return a JSON array', () => {
+        return chai.request(App).get('/api/v1/sessions')
+            .then(res => {
+                expect(res.status).to.equal(200);
+                expect(res).to.be.json;
+                expect(res.body).to.be.an('array');
+                expect(res.body).to.have.length(2);
+            });
     });
 
-    it('should have an explicit "message" property', () => {
-        chai.request(App).get('/')
-        .then(res => {
-            expect(res.body.message).to.exist;
-        });
+    it('should return session items', () => {
+        return chai.request(App).get('/api/v1/sessions')
+            .then(res => {
+                let [head, ...tail] = res.body;
+                expect(head).to.exist;
+                expect(head).to.have.all.keys([
+                    'id',
+                    'user',
+                    'doctor',
+                    'date',
+                    'session_data'
+                ]);
+            });
     });
 
 });
