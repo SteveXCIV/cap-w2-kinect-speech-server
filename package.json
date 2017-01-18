@@ -5,7 +5,7 @@
   "main": "build/main.js",
   "scripts": {
     "start": "node build/main.js",
-    "test": "echo NO TEST COMMAND"
+    "test": "mocha --reporter spec --require babel-polyfill --compilers js:babel-register test/**/*.js"
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/SteveXCIV/cap-w2-kinect-speech-server#readme",
   "devDependencies": {
+    "babel-polyfill": "^6.20.0",
     "babel-preset-env": "^1.1.8",
+    "babel-register": "^6.18.0",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
     "gulp": "3.9.1",
