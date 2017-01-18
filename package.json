@@ -19,10 +19,14 @@
   },
   "homepage": "https://github.com/SteveXCIV/cap-w2-kinect-speech-server#readme",
   "devDependencies": {
+    "babel-preset-env": "^1.1.8",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
     "gulp": "3.9.1",
+    "gulp-babel": "^6.1.2",
     "gulp-clean": "0.3.2",
+    "gulp-sourcemaps": "^2.4.0",
+    "merge-stream": "^1.0.1",
     "mocha": "^3.2.0"
   },
   "dependencies": {

@@ -1,19 +1,25 @@
-const gulp = require('gulp');
+const babel = require('gulp-babel');
 const clean = require('gulp-clean');
-const ts = require('gulp-typescript');
+const gulp = require('gulp');
+const merge = require('merge-stream');
+const sourcemaps = require('gulp-sourcemaps');
 
-const project = ts.createProject('tsconfig.json');
+const buildDir = 'build';
+const sourceDir = './src'
 
 gulp.task('build', () => {
-    const output = project.src().pipe(project());
-    return output.js.pipe(gulp.dest(project.options.outDir));
-});
+    let es6 = gulp.src(sourceDir + '/**/*.js')
+        .pipe(sourcemaps.init())
+        .pipe(babel())
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(buildDir));
 
-gulp.task('copy', () => {
-    return gulp.src('./src/**/*', '!./**/*.ts')
-        .pipe(gulp.dest(project.options.outDir));
+    let deps = gulp.src([sourceDir + '/**/*', '!' + sourceDir + '/**/*.js'])
+        .pipe(gulp.dest(buildDir));
+
+    return merge(es6, deps);
 });
 
 gulp.task('clean', () => {
-    return gulp.src(project.options.outDir).pipe(clean());
+    return gulp.src(buildDir).pipe(clean());
 });
