@@ -1,12 +1,12 @@
 import { install } from 'source-map-support';
 import App from './app';
-import sessionRouter from './routes/session_routes';
+import SessionRouter from './routers/session-router';
 
 // Sets up debugging via source maps
 install();
 
 let routes = {
-    '/sessions': sessionRouter
+    '/sessions': SessionRouter()
 };
 
 let server = new App(routes);
