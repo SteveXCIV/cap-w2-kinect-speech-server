@@ -1,11 +1,12 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import logger from 'morgan';
-import sessionRouter from './routes/session_routes';
 
 export default class {
-    constructor() {
+    constructor(routes, apiVersion = '1') {
         this.app = express();
+        this.apiPrefix = '/api/v' + String(apiVersion);
+        this.routes = routes;
 
         this.setupMiddleware();
         this.setupRoutes();
@@ -27,7 +28,11 @@ export default class {
     }
 
     setupRoutes() {
-        // Send all /api/v1/sessions through the session router
-        this.app.use('/api/v1/sessions', sessionRouter);
+        for (let route of Object.keys(this.routes)) {
+            let fullRoute = this.apiPrefix + route;
+            let router = this.routes[route];
+            console.log(`Setting up a router for the route: ${fullRoute}`);
+            this.app.use(fullRoute, router);
+        }
     }
 }
