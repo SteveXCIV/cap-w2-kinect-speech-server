@@ -5,11 +5,15 @@ import logger from 'morgan';
 export default class {
     constructor(routes, apiVersion = '1') {
         this.app = express();
-        this.apiPrefix = '/api/v' + String(apiVersion);
+        this._apiPrefix = '/api/v' + String(apiVersion);
         this.routes = routes;
 
         this.setupMiddleware();
         this.setupRoutes();
+    }
+
+    get apiPrefix() {
+        return this._apiPrefix;
     }
 
     runServer() {
