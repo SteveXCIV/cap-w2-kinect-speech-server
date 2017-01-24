@@ -24,6 +24,10 @@ Run `gulp build`<sup>1</sup>, you should now have a directory in the top-level o
 
 Run `npm start`, you should see some chatter on the console as the server comes online, you can then begin querying the API endpoints at [http://localhost:3000/](http://localhost:3000), or wherever you may have assigned the port via Environment Variables.
 
+#### Running Tests
+
+Run `npm test` after installing, this will invoke Mocha to run tests.
+
 #### Cleaning Up
 
 Run `gulp clean`<sup>1</sup>, this will delete the contents of the `build/` directory; this is useful if you want to ensure that everything is recompiled from ES6.
