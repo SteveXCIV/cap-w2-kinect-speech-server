@@ -7,7 +7,7 @@ const sourcemaps = require('gulp-sourcemaps');
 const buildDir = 'build';
 const sourceDir = './src'
 
-gulp.task('build', () => {
+gulp.task('build', (done) => {
     let es6 = gulp.src(sourceDir + '/**/*.js')
         .pipe(sourcemaps.init())
         .pipe(babel())
@@ -17,9 +17,12 @@ gulp.task('build', () => {
     let deps = gulp.src([sourceDir + '/**/*', '!' + sourceDir + '/**/*.js'])
         .pipe(gulp.dest(buildDir));
 
-    return merge(es6, deps);
+    return merge(es6, deps)
+        .on('error', (err) => done(err));
 });
 
-gulp.task('clean', () => {
-    return gulp.src(buildDir).pipe(clean());
+gulp.task('clean', (done) => {
+    return gulp.src(buildDir)
+        .pipe(clean())
+        .on('error', (err) => done(err));
 });
