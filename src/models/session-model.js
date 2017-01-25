@@ -27,7 +27,7 @@ const JointType = {
         'SpineMid',
         'SpineShoulder',
         'ThumbLeft',
-        'ThumbRight'
+        'ThumbRight',
         'WristLeft',
         'WristRight',
     ],
