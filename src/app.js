@@ -3,10 +3,11 @@ import express from 'express';
 import logger from 'morgan';
 
 export default class {
-    constructor(routes, apiVersion = '1') {
-        this.app = express();
+    constructor(port, routes, apiVersion = '1') {
+        this._app = express();
+        this._port = port;
         this._apiPrefix = '/api/v' + String(apiVersion);
-        this.routes = routes;
+        this._routes = routes;
 
         this.setupMiddleware();
         this.setupRoutes();
@@ -17,26 +18,26 @@ export default class {
     }
 
     runServer() {
-        this.app.listen(process.env.PORT || 3000, () => {
-            console.log('Started the webserver.');
+        this._app.listen(this._port, () => {
+            console.log(`Started the webserver on port ${this._port}.`);
         });
     }
 
     setupMiddleware() {
         // Set up logging
-        this.app.use(logger('dev'));
+        this._app.use(logger('dev'));
 
         // Set up the middleware for JSON request/responses
-        this.app.use(bodyParser.json());
-        this.app.use(bodyParser.urlencoded({ extended: false }));
+        this._app.use(bodyParser.json());
+        this._app.use(bodyParser.urlencoded({ extended: false }));
     }
 
     setupRoutes() {
-        for (let route of Object.keys(this.routes)) {
+        for (let route of Object.keys(this._routes)) {
             let fullRoute = this.apiPrefix + route;
-            let router = this.routes[route];
+            let router = this._routes[route];
             console.log(`Setting up a router for the route: ${fullRoute}`);
-            this.app.use(fullRoute, router);
+            this._app.use(fullRoute, router);
         }
     }
 }

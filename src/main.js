@@ -10,11 +10,13 @@ install();
 // Start up database -- replace this with environment vars to auth in prod
 mongoose.connect("mongodb://localhost:27017/cap-w2");
 
+const port = process.env.PORT || 3000;
+
 let sessionService = new SessionService();
 
 let routes = {
     '/sessions': SessionRouter(sessionService)
 };
 
-let server = new App(routes);
+let server = new App(port, routes);
 server.runServer();
