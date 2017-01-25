@@ -1,20 +1,20 @@
 import { Router } from 'express';
 
-export default function(sessionService) {
+export default function(sessionModel) {
     let router = Router();
 
     router.get('/', (req, res) => {
-        res.json(sessionService.getAllSessions());
+        res.json(sessionModel.find());
     });
 
     router.get('/:id', (req, res) => {
-        let sessionId = parseInt(req.params.id);
-        res.json(sessionService.getSessionById(sessionId));
+        let sessionId = req.params.id;
+        res.json(sessionModel.findById(sessionId));
     });
 
     router.post('/', (req, res) => {
         let data = req.body;
-        res.json(sessionService.createSession(data));
+        res.json(sessionModel.create(data));
     });
 
     return router;

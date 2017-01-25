@@ -36,36 +36,45 @@ const JointType = {
 
 const RequiredNumber = {
     type: Number,
-    required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
-};
+    required: true
+}
 
-const Joint = {
+const Joint = mongoose.Schema({
     JointType: {
         type: String,
         enum: JointType,
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
+        required: true
     },
     X: RequiredNumber,
     Y: RequiredNumber,
     Z: RequiredNumber
-};
+},
+{
+    _id: false
+});
 
-const Snapshot = {
+const Snapshot = mongoose.Schema({
     Joints: {
         type: [ Joint ],
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
+        required: true
     },
     Time: {
         type: Date,
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
+        required: true
     }
-};
+},
+{
+    _id: false
+});
 
 const Session = mongoose.Schema({
     Snapshots: {
-        type: Snapshot,
+        type: [ Snapshot ],
         required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
     }
+},
+{
+    versionKey: false
 });
 
 export default mongoose.model('Session', Session);

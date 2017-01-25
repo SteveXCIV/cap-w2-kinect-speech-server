@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser';
 import express from 'express';
+import expressPromise from 'express-promise';
 import logger from 'morgan';
 
 export default class {
@@ -30,6 +31,9 @@ export default class {
         // Set up the middleware for JSON request/responses
         this._app.use(bodyParser.json());
         this._app.use(bodyParser.urlencoded({ extended: false }));
+
+        // Now, extend it so promises are valid to return
+        this._app.use(expressPromise());
     }
 
     setupRoutes() {
