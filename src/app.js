@@ -4,14 +4,13 @@ import expressPromise from 'express-promise';
 import logger from 'morgan';
 
 export default class {
-    constructor(port, routes, apiVersion = '1') {
+    constructor(port, sessionService) {
         this._app = express();
         this._port = port;
-        this._apiPrefix = '/api/v' + String(apiVersion);
-        this._routes = routes;
+        this._sessionService = sessionService;
 
-        this.setupMiddleware();
-        this.setupRoutes();
+        this._setupMiddleware();
+        this._setupRoutes();
     }
 
     get apiPrefix() {
@@ -24,7 +23,7 @@ export default class {
         });
     }
 
-    setupMiddleware() {
+    _setupMiddleware() {
         // Set up logging
         this._app.use(logger('dev'));
 
@@ -36,12 +35,23 @@ export default class {
         this._app.use(expressPromise());
     }
 
-    setupRoutes() {
-        for (let route of Object.keys(this._routes)) {
-            let fullRoute = this.apiPrefix + route;
-            let router = this._routes[route];
-            console.log(`Setting up a router for the route: ${fullRoute}`);
-            this._app.use(fullRoute, router);
-        }
+    _setupRoutes() {
+        this._setupSessionRoutes();
+    }
+
+    _setupSessionRoutes() {
+        this._app.get('/api/v1/sessions', (req, res) => {
+            res.json(this._sessionService.getAllSessions());
+        });
+
+        this._app.get('/api/v1/sessions/:id', (req, res) => {
+            let sessionId = req.params.id;
+            res.json(this._sessionService.getSessionById(sessionId));
+        });
+
+        this._app.post('/api/v1/sessions', (req, res) => {
+            let session = req.body;
+            res.json(this._sessionService.createSession(session));
+        });
     }
 }
