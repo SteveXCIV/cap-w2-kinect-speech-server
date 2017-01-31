@@ -1,5 +1,6 @@
 import * as mocha from 'mocha';
 import * as chai from 'chai';
+import HttpError from 'standard-http-error';
 import SessionService from '../src/services/session-service';
 
 const expect = chai.expect;
@@ -22,7 +23,7 @@ describe('session-service tests', function() {
         return service
             .createSession({ foo: "bar" })
             .then(val => {
-                expect(val.code).to.equal(200);
+                expect(val.code).to.equal(HttpError.OK);
                 expect(val.data).to.exist;
                 expect(val.data.foo).to.exist;
                 expect(val.data.foo).to.equal("bar");
@@ -33,7 +34,7 @@ describe('session-service tests', function() {
         let service = new SessionService(mockModel);
         return service.getAllSessions()
             .then(val => {
-                expect(val.code).to.equal(200);
+                expect(val.code).to.equal(HttpError.OK);
                 expect(val.data).to.exist;
                 expect(val.data).to.be.instanceof(Array);
                 expect(val.data).to.have.lengthOf(2);
@@ -44,7 +45,7 @@ describe('session-service tests', function() {
         let service = new SessionService(mockModel);
         return service.getSessionById(123)
             .then(val => {
-                expect(val.code).to.equal(200);
+                expect(val.code).to.equal(HttpError.OK);
                 expect(val.data).to.exist;
                 expect(val.data.foo).to.exist;
                 expect(val.data.foo).to.equal("bar");
@@ -55,7 +56,7 @@ describe('session-service tests', function() {
         let service = new SessionService(mockModelBad);
         return service.createSession({ foo: "bar" })
             .then(val => {
-                expect(val.code).to.equal(500);
+                expect(val.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
                 expect(val.data).to.exist;
                 expect(val.data.message).to.exist;
             });
@@ -65,7 +66,7 @@ describe('session-service tests', function() {
         let service = new SessionService(mockModelBad);
         return service.getAllSessions()
             .then(val => {
-                expect(val.code).to.equal(500);
+                expect(val.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
                 expect(val.data).to.exist;
                 expect(val.data.message).to.exist;
             });
@@ -75,7 +76,7 @@ describe('session-service tests', function() {
         let service = new SessionService(mockModelBad);
         return service.getSessionById(123)
             .then(val => {
-                expect(val.code).to.equal(500);
+                expect(val.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
                 expect(val.data).to.exist;
                 expect(val.data.message).to.exist;
             });
@@ -85,7 +86,7 @@ describe('session-service tests', function() {
         let service = new SessionService({ findById: id => Promise.resolve() });
         return service.getSessionById(123)
             .then(val => {
-                expect(val.code).to.equal(404);
+                expect(val.code).to.equal(HttpError.NOT_FOUND);
                 expect(val.data).to.exist;
                 expect(val.data.message).to.exist;
             });
