@@ -2,13 +2,21 @@ import HttpError from 'standard-http-error';
 
 class HttpErrorMessage extends HttpError {
     constructor(code, message) {
-        if (!!(message)) {
-            super(code, message);
-        } else {
-            super(code);
-        }
-        this.data = { message: this.message };
+        super(code);
+        this.data = { message: message || this.message };
     }
+}
+
+function makeHumanReadableValidationError(err) {
+    let messages;
+    if (!!(err.name) && err.name === 'ValidationError') {
+        messages = Object.keys(err.errors).map(key => {
+            let theError = err.errors[key];
+            if (theError.hasOwnProperty('message')) return theError.message;
+            else return theError.name;
+        });
+    }
+    return messages;
 }
 
 export function createNotFoundOrElse(val) {
@@ -20,5 +28,11 @@ export function createOkMessage(val) {
 }
 
 export function createErrorWrapperMessage(error) {
-    return new HttpErrorMessage(HttpError.INTERNAL_SERVER_ERROR);
+    let code = HttpError.INTERNAL_SERVER_ERROR;
+    let e;
+    if (e = makeHumanReadableValidationError(error)) {
+        console.log(e);
+        return new HttpErrorMessage(code, e);
+    }
+    return new HttpErrorMessage(code);
 }
