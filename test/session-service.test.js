@@ -1,6 +1,5 @@
 import * as mocha from 'mocha';
 import * as chai from 'chai';
-
 import SessionService from '../src/services/session-service';
 
 const expect = chai.expect;
