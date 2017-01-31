@@ -7,9 +7,9 @@ const wrapAndRejectIfNone = (val) => {
 };
 
 const wrapErr = (err) => {
+    console.log(err);
     return { code: 500, data: { message: "Internal server error." } };
 };
-
 
 export default class {
     constructor(model) {

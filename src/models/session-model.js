@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
-const VALIDATION_ERROR_INVALID_ENUM = 'ValidationError ({PATH}): `{VALUE}` is not valid.'
-const VALIDATION_ERROR_MISSING_REQUIRED = 'ValidationError ({PATH}): Missing required value.'
+const VALIDATION_ERROR_INVALID_ENUM = 'ValidationError: `{VALUE}` is not valid for {PATH}.'
+const VALIDATION_ERROR_MISSING_REQUIRED = 'ValidationError: Missing required value ({PATH}).'
 
 const JointType = {
     values: [
@@ -36,14 +36,14 @@ const JointType = {
 
 const RequiredNumber = {
     type: Number,
-    required: true
+    required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
 }
 
 const Joint = mongoose.Schema({
     JointType: {
         type: String,
         enum: JointType,
-        required: true
+        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
     },
     X: RequiredNumber,
     Y: RequiredNumber,
@@ -56,11 +56,11 @@ const Joint = mongoose.Schema({
 const Snapshot = mongoose.Schema({
     Joints: {
         type: [ Joint ],
-        required: true
+        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
     },
     Time: {
         type: Date,
-        required: true
+        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
     }
 },
 {
