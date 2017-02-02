@@ -8,15 +8,18 @@ class HttpErrorMessage extends HttpError {
 }
 
 function makeHumanReadableValidationError(err) {
-    let messages;
-    if (!!(err.name) && err.name === 'ValidationError') {
-        messages = Object.keys(err.errors).map(key => {
-            let theError = err.errors[key];
-            if (theError.hasOwnProperty('message')) return theError.message;
-            else return theError.name;
-        });
+    if (err.name === 'ValidationError') {
+        if (err.errors) {
+            return Object.keys(err.errors).map(key => {
+                let theError = err.errors[key];
+                if (theError.hasOwnProperty('message')) return theError.message;
+                else if (theError.hasOwnProperty('name')) return theError.name;
+                else return key;
+            });
+        }
+        return err.name;
     }
-    return messages;
+    return false;
 }
 
 export function createNotFoundOrElse(val) {
@@ -31,7 +34,6 @@ export function createErrorWrapperMessage(error) {
     let code = HttpError.INTERNAL_SERVER_ERROR;
     let e;
     if (e = makeHumanReadableValidationError(error)) {
-        console.log(e);
         return new HttpErrorMessage(code, e);
     }
     return new HttpErrorMessage(code);
