@@ -14,7 +14,9 @@ mongoose.connect("mongodb://localhost:27017/cap-w2");
 
 const port = process.env.PORT || 3000;
 
+const dev = process.env.DEV || false;
+
 let sessionService = new SessionService(SessionModel);
 
-let server = new App(port, sessionService);
+let server = new App(port, sessionService, dev);
 server.runServer();

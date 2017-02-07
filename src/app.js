@@ -3,13 +3,17 @@ import express from 'express';
 import logger from 'morgan';
 
 export default class {
-    constructor(port, sessionService) {
+    constructor(port, sessionService, dev = false) {
         this._app = express();
         this._port = port;
         this._sessionService = sessionService;
 
         this._setupMiddleware();
         this._setupRoutes();
+
+        if (dev) {
+            this._setupDevRoutes();
+        }
     }
 
     get apiPrefix() {
@@ -60,6 +64,12 @@ export default class {
                     res.status(out.code)
                         .json(out.data);
                 })
+        });
+    }
+
+    _setupDevRoutes() {
+        this._app.get('/api/v1/dev', (req, res) => {
+            res.status(200).send('Running in dev mode.');
         });
     }
 }
