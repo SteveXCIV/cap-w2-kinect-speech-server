@@ -3,13 +3,17 @@ import express from 'express';
 import logger from 'morgan';
 
 export default class {
-    constructor(routes, apiVersion = '1') {
-        this.app = express();
-        this._apiPrefix = '/api/v' + String(apiVersion);
-        this.routes = routes;
+    constructor(port, sessionService, dev = false) {
+        this._app = express();
+        this._port = port;
+        this._sessionService = sessionService;
 
-        this.setupMiddleware();
-        this.setupRoutes();
+        this._setupMiddleware();
+        this._setupRoutes();
+
+        if (dev) {
+            this._setupDevRoutes();
+        }
     }
 
     get apiPrefix() {
@@ -17,26 +21,55 @@ export default class {
     }
 
     runServer() {
-        this.app.listen(process.env.PORT || 3000, () => {
-            console.log('Started the webserver.');
+        this._app.listen(this._port, () => {
+            console.log(`Started the webserver on port ${this._port}.`);
         });
     }
 
-    setupMiddleware() {
+    _setupMiddleware() {
         // Set up logging
-        this.app.use(logger('dev'));
+        this._app.use(logger('dev'));
 
         // Set up the middleware for JSON request/responses
-        this.app.use(bodyParser.json());
-        this.app.use(bodyParser.urlencoded({ extended: false }));
+        this._app.use(bodyParser.json());
+        this._app.use(bodyParser.urlencoded({ extended: false }));
     }
 
-    setupRoutes() {
-        for (let route of Object.keys(this.routes)) {
-            let fullRoute = this.apiPrefix + route;
-            let router = this.routes[route];
-            console.log(`Setting up a router for the route: ${fullRoute}`);
-            this.app.use(fullRoute, router);
-        }
+    _setupRoutes() {
+        this._setupSessionRoutes();
+    }
+
+    _setupSessionRoutes() {
+        this._app.get('/api/v1/sessions', (req, res) => {
+            this._sessionService.getAllSessions()
+                .then(out => {
+                    res.status(out.code)
+                        .json(out.data);
+                });
+        });
+
+        this._app.get('/api/v1/sessions/:id', (req, res) => {
+            let sessionId = req.params.id;
+            this._sessionService.getSessionById(sessionId)
+                .then(out => {
+                    res.status(out.code)
+                        .json(out.data);
+                });
+        });
+
+        this._app.post('/api/v1/sessions', (req, res) => {
+            let session = req.body;
+            this._sessionService.createSession(session)
+                .then(out => {
+                    res.status(out.code)
+                        .json(out.data);
+                })
+        });
+    }
+
+    _setupDevRoutes() {
+        this._app.get('/api/v1/dev', (req, res) => {
+            res.status(200).send('Running in dev mode.');
+        });
     }
 }

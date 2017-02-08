@@ -1,27 +1,29 @@
-import data from '../data';
+import {
+    createOkMessage,
+    createErrorWrapperMessage,
+    createNotFoundOrElse
+} from './response-generator';
 
 export default class {
     constructor(model) {
-        this.model = data;
-        this._idCounter = this._getNextId();
+        this._model = model;
     }
 
     createSession(session) {
-        let id = this._idCounter++;
-        session['id'] = id;
-        this.model.push(session);
-        return session;
+        return this._model
+            .create(session)
+            .then(createOkMessage, createErrorWrapperMessage);
     }
 
     getAllSessions() {
-        return this.model;
+        return this._model
+            .find()
+            .then(createOkMessage, createErrorWrapperMessage);
     }
 
     getSessionById(sessionId) {
-        return this.model.find(s => s.id === sessionId);
-    }
-
-    _getNextId() {
-        return this.model.reduce((acc, x) => x.id >= acc ? 1 + x.id : acc, 0);
+        return this._model
+            .findById(sessionId)
+            .then(createNotFoundOrElse, createErrorWrapperMessage);
     }
 }
