@@ -8,7 +8,7 @@ const VALIDATION_ERROR_UNIQUE = 'ValidationError: The {PATH} `{VALUE}` is alread
 // this is made freely available at http://emailregex.com/, it's a highly accurate email regex
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-const User = mongoose.Schema({
+const Account = mongoose.Schema({
     email: {
         type: String,
         match: [ EMAIL_REGEX, VALIDATION_ERROR_BAD_EMAIL ],
@@ -35,5 +35,5 @@ const User = mongoose.Schema({
     }
 });
 
-User.plugin(mongoose_unique, { message: VALIDATION_ERROR_UNIQUE });
-export default mongoose.model('User', User);
+Account.plugin(mongoose_unique, { message: VALIDATION_ERROR_UNIQUE });
+export default mongoose.model('Account', User);
