@@ -1,7 +1,5 @@
+import errors from './error-messages';
 import mongoose from 'mongoose';
-
-const VALIDATION_ERROR_INVALID_ENUM = 'ValidationError: `{VALUE}` is not valid for {PATH}.'
-const VALIDATION_ERROR_MISSING_REQUIRED = 'ValidationError: Missing required value ({PATH}).'
 
 const JointType = {
     values: [
@@ -31,19 +29,19 @@ const JointType = {
         'WristLeft',
         'WristRight',
     ],
-    message: VALIDATION_ERROR_INVALID_ENUM
+    message: errors.VALIDATION_ERROR_INVALID_ENUM
 };
 
 const RequiredNumber = {
     type: Number,
-    required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
+    required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
 }
 
 const Joint = mongoose.Schema({
     JointType: {
         type: String,
         enum: JointType,
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
+        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     },
     X: RequiredNumber,
     Y: RequiredNumber,
@@ -56,11 +54,11 @@ const Joint = mongoose.Schema({
 const Snapshot = mongoose.Schema({
     Joints: {
         type: [ Joint ],
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
+        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     },
     Time: {
         type: Date,
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
+        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     }
 },
 {
@@ -70,7 +68,7 @@ const Snapshot = mongoose.Schema({
 const Session = mongoose.Schema({
     Snapshots: {
         type: [ Snapshot ],
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
+        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     }
 },
 {
