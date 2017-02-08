@@ -1,0 +1,64 @@
+<div class="well">
+	<h1> {{ title }} </h1>
+	<p><strong>Player: </strong>{{ sessiondata.Player }}</p>
+	<p><strong>Date: </strong>{{ sessiondata.Date | date }}</p>
+	<p><strong>Level: 2</strong></p>
+	<p><strong>Game Completion Time: </strong></p>
+</div>
+
+<!--
+<div class="well" ng-repeat="test in testdata">
+<h2>{{ 'Player: ' + test.Session[0].Player }} </h2>
+<p><strong>Level: </strong>{{ test.level }}</p>
+<p><strong>Time: </strong>{{ test.time }}</p>
+</div>
+<div class="well" ng-repeat="sample in sampledata">
+<h2>{{ 'Timestamp: ' + sample.Time }} </h2>
+<p><strong>Joint Type: </strong>{{ sample.Joints[0].JointType }}</p>
+<p><strong>X Position: </strong>{{ sample.Joints[0].X }}</p>
+<p><strong>Y Position: </strong>{{ sample.Joints[0].Y }}</p>
+<p><strong>Z Position: </strong>{{ sample.Joints[0].Z }}</p>
+</div>
+-->
+
+<div class="well">
+	<h1> {{ "Range of Motion: Right Hand" }} </h1>
+	<div class="chart" style="width:{{width}}px; height:{{height}}px;">
+
+		<!-- Labels -->
+		<div class="y" style="width:{{height}}px;">{{yAxis}}</div>
+		<div class="x">{{xAxis}}</div>
+
+		<!-- Data -->
+		<div ng-repeat="dot in righthand" class="dot" style="bottom:{{dot.value / max * height}}px; left:{{($index + 0.5) / data.length * width}}px;"></div>
+
+	</div>
+</div>
+
+
+<div class="well"  ng-repeat="sample in snapshots">
+	<p><strong>Time Stamp: </strong>{{ sample.Time }}</p>
+	<table>
+		<tr>
+			<th>Joint Type</th>
+			<th>X Position</th>
+			<th>Y Position</th>
+			<th>Z Position</th>
+		</tr>
+		<tr>
+			<td>{{ sample.Joints[0].JointType }}</td>
+			<td>{{ sample.Joints[0].X }}</td>
+			<td>{{ sample.Joints[0].Y }}</td>
+			<td>{{ sample.Joints[0].Z }}</td>
+		</tr>
+		<tr>
+			<td>{{ sample.Joints[1].JointType }}</td>
+			<td>{{ sample.Joints[1].X }}</td>
+			<td>{{ sample.Joints[1].Y }}</td>
+			<td>{{ sample.Joints[1].Z }}</td>
+		</tr>
+	</table>
+</div>
+
+<h3>{{ 'The JSON Object' }}</h3>
+<pre>{{ righthand | json }}</pre>
