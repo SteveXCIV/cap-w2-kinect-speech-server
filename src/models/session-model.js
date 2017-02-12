@@ -53,7 +53,7 @@ const Joint = mongoose.Schema({
     _id: false
 });
 
-const Snapshot = mongoose.Schema({
+const BodySnapshot = mongoose.Schema({
     Joints: {
         type: [ Joint ],
         required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
@@ -67,9 +67,28 @@ const Snapshot = mongoose.Schema({
     _id: false
 });
 
+const AudioSnapshot = mongoose.Schema({
+    Intensity: {
+        type: Number,
+        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ],
+        default: 0.0
+    },
+    Time: {
+        type: Date,
+        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
+    }
+},
+{
+    _id: false
+});
+
 const Session = mongoose.Schema({
     Snapshots: {
-        type: [ Snapshot ],
+        type: [ BodySnapshot ],
+        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
+    },
+    AudioSnapshots: {
+        type: [ AudioSnapshot ],
         required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
     }
 },
