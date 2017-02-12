@@ -63,7 +63,7 @@ describe('session-model tests', function() {
             ]
         });
         s.validate(err => {
-            expect(err).not.to.exist;
+            expect(err.errors['Snapshots.0.Time']).not.to.exist;
             done();
         });
     });
@@ -78,7 +78,7 @@ describe('session-model tests', function() {
             ]
         })
         s.validate(err => {
-            expect(err).not.to.exist;
+            expect(err.errors['Snapshots.0.Time']).not.to.exist;
             done();
         });
     });
@@ -111,5 +111,39 @@ describe('session-model tests', function() {
             expect(err.errors['Snapshots.0.Joints.0.JointType']).to.exist;
             done();
         });
+    });
+
+    it('should be accept and correct for missing intensity value', function(done) {
+        let s = new Session({
+            Snapshots: [
+                {
+                    Joints: [{ JointType: 'AnkleLeft', X: 0.0, Y: 0.0, Z: 0.0 }],
+                    Time: new Date()
+                }
+            ],
+            AudioSnapshots: [
+                {
+                    Time: new Date()
+                }
+            ]
+        });
+        expect(s.AudioSnapshots[0]).to.exist;
+        expect(s.AudioSnapshots[0].Intensity).to.exist;
+        expect(s.AudioSnapshots[0].Intensity).to.equal(0.0);
+        s.validate(err => done(err));
+    });
+
+    it('should be invalid with malformed AudioSnapshots (no Time)', function(done) {
+        let s = new Session({
+            AudioSnapshots: [
+                {
+                    Intensity: 0.0
+                }
+            ]
+        });
+        s.validate(err => {
+            expect(err.errors['AudioSnapshots.0.Time']).to.exist;
+            done();
+        })
     });
 });
