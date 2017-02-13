@@ -52,6 +52,10 @@ const PhysicianSchema = mongoose.Schema({
         ref: PATIENT_NAME
     }]
 });
+PhysicianSchema.statics.findProfileById = function(physicianId, cb) {
+    return this.findById(physicianId)
+        .populate({ path: 'patients', select: '_id firstName lastName' });
+};
 
 export const Patient = Account.discriminator(PATIENT_NAME, PatientSchema);
 export const Physician = Account.discriminator(PHYSICIAN_NAME, PhysicianSchema);

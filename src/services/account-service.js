@@ -28,10 +28,9 @@ export default class {
             .then(createOkMessage, createErrorWrapperMessage);
     }
 
-    getPhysicianById(physicianId) {
+    getPhysicianProfileById(physicianId) {
         return this._physicianModel
-            .findById(physicianId)
-            .populate({ path: 'patients', select: '_id firstName lastName' })
+            .findProfileById(physicianId)
             .then(createNotFoundOrElse, createErrorWrapperMessage);
     }
 }
