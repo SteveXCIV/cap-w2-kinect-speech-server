@@ -7,13 +7,13 @@ import AccountService from '../src/services/account-service';
 const expect = chai.expect;
 
 describe('account-service patient tests', function() {
-    it('should return code 200 for the patient it creates', function() {
+    it('should return code 200 for the patient it registers', function() {
         let patient = { _id: "1234567890", firstName: "foo", lastName: "bar" };
         let f = sinon.mock()
             .once()
             .withExactArgs(patient)
             .returns(Promise.resolve(patient));
-        let service = new AccountService({ create: f }, {});
+        let service = new AccountService({ register: f }, {});
         return service.registerPatient(patient)
             .then(val => {
                 expect(val.code).to.equal(HttpError.OK);
@@ -23,11 +23,11 @@ describe('account-service patient tests', function() {
             });
     });
 
-    it('should return code 500 for a failed patient create', function() {
+    it('should return code 500 for a failed patient register', function() {
         let f = sinon.mock()
             .once()
             .returns(Promise.reject());
-        let service = new AccountService({ create: f }, {});
+        let service = new AccountService({ register: f }, {});
         return service.registerPatient({})
             .then(val => {
                 expect(val.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
@@ -72,13 +72,13 @@ describe('account-service patient tests', function() {
 });
 
 describe('account-service physician tests', function() {
-    it('should return code 200 for the physician it creates', function() {
+    it('should return code 200 for the physician it registers', function() {
         let physician = { _id: "1234567890", firstName: "foo", lastName: "bar" };
         let f = sinon.mock()
             .once()
             .withExactArgs(physician)
             .returns(Promise.resolve(physician));
-        let service = new AccountService({}, { create: f });
+        let service = new AccountService({}, { register: f });
         return service.registerPhysician(physician)
             .then(val => {
                 expect(val.code).to.equal(HttpError.OK);
@@ -88,11 +88,11 @@ describe('account-service physician tests', function() {
             });
     });
 
-    it('should return code 500 for a failed physician create', function() {
+    it('should return code 500 for a failed physician register', function() {
         let f = sinon.mock()
             .once()
             .returns(Promise.reject());
-        let service = new AccountService({}, { create: f });
+        let service = new AccountService({}, { register: f });
         return service.registerPhysician({})
             .then(val => {
                 expect(val.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
