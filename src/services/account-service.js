@@ -5,14 +5,19 @@ import {
 } from './response-generator';
 
 export default class {
-    constructor(patientModel, physicianModel) {
+    constructor(patientModel, physicianModel, accountModel) {
         this._patientModel = patientModel;
         this._physicianModel = physicianModel;
+        this._accountModel = accountModel;
+    }
+
+    getAccountByEmail(email) {
+        return this._accountModel.findOne({ email: email });
     }
 
     registerPatient(patient) {
         return this._patientModel
-            .create(patient)
+            .register(patient)
             .then(createOkMessage, createErrorWrapperMessage);
     }
 
@@ -24,7 +29,7 @@ export default class {
 
     registerPhysician(physician) {
         return this._physicianModel
-            .create(physician)
+            .register(physician)
             .then(createOkMessage, createErrorWrapperMessage);
     }
 

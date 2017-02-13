@@ -1,6 +1,7 @@
 import errors from './error-messages';
 import mongoose from 'mongoose';
 import mongoose_unique from 'mongoose-unique-validator';
+import bcrypt from 'bcrypt-nodejs';
 import SESSION_NAME from './session-model.js';
 
 // this is made freely available at http://emailregex.com/, it's a highly accurate email regex
@@ -38,7 +39,17 @@ const AccountSchema = mongoose.Schema({
     }
 }, options);
 AccountSchema.plugin(mongoose_unique, { message: errors.VALIDATION_ERROR_UNIQUE });
-const Account = mongoose.model(ACCOUNT_NAME, AccountSchema);
+AccountSchema.methods.authenticate = function(password) {
+    return bcrypt.compareSync(password, this.password);
+}
+AccountSchema.statics.register = function(account) {
+    if (account.password) {
+        let p = bcrypt.hashSync(account.password);
+        account.password = p;
+    }
+    return this.create(account);
+}
+export const Account = mongoose.model(ACCOUNT_NAME, AccountSchema);
 
 const PatientSchema = mongoose.Schema({
     physician: {

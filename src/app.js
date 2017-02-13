@@ -1,11 +1,21 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import logger from 'morgan';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import passport from 'passport';
+import { Strategy as LocalStrategy } from 'passport-local';
+
+let _accountService;
 
 export default class {
-    constructor(port, sessionService, dev = false) {
+    constructor(port, secret, accountService, sessionService, dev = false) {
         this._app = express();
         this._port = port;
+        this._secret = secret;
+        this._accountService = accountService;
+        // the way passport works makes this hack necessary
+        _accountService = accountService;
         this._sessionService = sessionService;
 
         this._setupMiddleware();
@@ -33,10 +43,69 @@ export default class {
         // Set up the middleware for JSON request/responses
         this._app.use(bodyParser.json());
         this._app.use(bodyParser.urlencoded({ extended: false }));
+
+        // set up middleware for cookies
+        this._app.use(cookieParser());
+        // set up session handling
+        this._app.use(session({ secret: this._secret }));
+
+        // set up passportjs
+        passport.use(new LocalStrategy({
+            usernameField: 'email'
+        }, this._localStrategy));
+        passport.serializeUser(this._serializeUser);
+        passport.deserializeUser(this._deserializeUser);
+        this._app.use(passport.initialize());
+        this._app.use(passport.session());
+    }
+
+    _serializeUser(user, done) {
+        done(null, user._id);
+    }
+
+    _deserializeUser(id, done) {
+        _accountService.getPhysicianProfileById(id)
+            .then(val => {
+                if (val.code == HttpError.OK) done(null, val.data);
+                else done(val, false);
+            });
+    }
+
+    _localStrategy(email, password, done) {
+        _accountService.getAccountByEmail(email)
+            .exec((err, user) => {
+                if (err) return done(err);
+                if (!user) return done(null, false, { message: 'Invalid credentials.' });
+                if (!user.authenticate(password)) return done(null, false, { message: 'Invalid credentials.' });
+                return done(null, user);
+            });
     }
 
     _setupRoutes() {
+        this._setupAccountRoutes();
         this._setupSessionRoutes();
+    }
+
+    _setupAccountRoutes() {
+        this._app.post('/api/v1/register/patient', (req, res) => {
+            this._accountService.registerPatient(req.body)
+                .then(out => {
+                    res.status(out.code)
+                        .json(out.data);
+                })
+        });
+
+        this._app.post('/api/v1/register/physician', (req, res) => {
+            this._accountService.registerPhysician(req.body)
+                .then(out => {
+                    res.status(out.code)
+                        .json(out.data);
+                })
+        });
+
+        this._app.post('/api/v1/login/physician', passport.authenticate('local'), (req, res) => {
+            res.status(200).json(req.user);
+        });
     }
 
     _setupSessionRoutes() {
