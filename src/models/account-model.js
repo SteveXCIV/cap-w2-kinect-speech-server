@@ -8,7 +8,9 @@ const ACCOUNT_NAME = 'Account';
 const PATIENT_NAME = 'Patient';
 const PHYSICIAN_NAME = 'Physician';
 
-const Account = mongoose.Schema({
+const options = { discriminatorKey: 'kind' };
+
+const AccountSchema = mongoose.Schema({
     email: {
         type: String,
         match: [ EMAIL_REGEX, errors.VALIDATION_ERROR_BAD_EMAIL ],
@@ -33,7 +35,23 @@ const Account = mongoose.Schema({
         required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ],
         default: Date.now
     }
-});
-Account.plugin(mongoose_unique, { message: VALIDATION_ERROR_UNIQUE });
+}, options);
+AccountSchema.plugin(mongoose_unique, { message: VALIDATION_ERROR_UNIQUE });
+const Account = mongoose.model(ACCOUNT_NAME, AccountSchema);
 
-export const Account = mongoose.model(ACCOUNT_NAME, Account);
+const PatientSchema = mongoose.Schema({
+    physician: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: PHYSICIAN_NAME
+    }
+});
+
+const PhysicianSchema = mongoose.Schema({
+    patients: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: PATIENT_NAME
+    }]
+});
+
+export const Patient = Account.discriminator(PATIENT_NAME, PatientSchema);
+export const Physician = Account.discriminator(PHYSICIAN_NAME, PhysicianSchema);
