@@ -17,6 +17,13 @@ describe('response-generator createErrorWrapperMessage tests', function () {
         expect(msg.data.message).to.exist;
     });
 
+    it('should handle null/undefined errors', function(){
+        let msg = createErrorWrapperMessage();
+        expect(msg.code).to.exist;
+        expect(msg.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
+        expect(msg.data.message).to.exist;
+    });
+
     it('should produce a special message for a ValidationError', function() {
         const errName = 'ValidationError';
         let error = { name: errName };
