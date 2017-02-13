@@ -75,4 +75,5 @@ const Session = mongoose.Schema({
     versionKey: false
 });
 
-export default mongoose.model('Session', Session);
+export const SESSION_NAME = 'Session';
+export default mongoose.model(SESSION_NAME, Session);

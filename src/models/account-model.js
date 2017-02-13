@@ -1,6 +1,7 @@
 import errors from './error-messages';
 import mongoose from 'mongoose';
 import mongoose_unique from 'mongoose-unique-validator';
+import SESSION_NAME from './session-model.js';
 
 // this is made freely available at http://emailregex.com/, it's a highly accurate email regex
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -36,14 +37,18 @@ const AccountSchema = mongoose.Schema({
         default: Date.now
     }
 }, options);
-AccountSchema.plugin(mongoose_unique, { message: VALIDATION_ERROR_UNIQUE });
+AccountSchema.plugin(mongoose_unique, { message: errors.VALIDATION_ERROR_UNIQUE });
 const Account = mongoose.model(ACCOUNT_NAME, AccountSchema);
 
 const PatientSchema = mongoose.Schema({
     physician: {
         type: mongoose.Schema.Types.ObjectId,
         ref: PHYSICIAN_NAME
-    }
+    },
+    sessions: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: SESSION_NAME
+    }]
 });
 
 const PhysicianSchema = mongoose.Schema({
