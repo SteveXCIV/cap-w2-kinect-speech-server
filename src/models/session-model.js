@@ -83,7 +83,7 @@ const AudioSnapshot = mongoose.Schema({
 });
 
 const Session = mongoose.Schema({
-    Snapshots: {
+    BodySnapshots: {
         type: [ BodySnapshot ],
         required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
     },
