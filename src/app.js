@@ -2,6 +2,10 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import logger from 'morgan';
 
+// set the size limit for json objects to 1MB
+// we should never actually need that much in practice
+const JSON_SIZE_LIMIT = '1mb';
+
 export default class {
     constructor(port, sessionService, dev = false) {
         this._app = express();
@@ -31,8 +35,8 @@ export default class {
         this._app.use(logger('dev'));
 
         // Set up the middleware for JSON request/responses
-        this._app.use(bodyParser.json());
-        this._app.use(bodyParser.urlencoded({ extended: false }));
+        this._app.use(bodyParser.json({ limit: JSON_SIZE_LIMIT}));
+        this._app.use(bodyParser.urlencoded({ extended: false, limit: JSON_SIZE_LIMIT }));
     }
 
     _setupRoutes() {
