@@ -8,13 +8,19 @@ const expect = chai.expect;
 
 describe('account-service patient tests', function() {
     it('should return code 200 for the patient it registers', function() {
-        let patient = { _id: "1234567890", firstName: "foo", lastName: "bar" };
+        let physicianId = "9876543210";
+        let patient = {
+            _id: "1234567890",
+            firstName: "foo",
+            lastName: "bar",
+            physician: physicianId
+        };
         let f = sinon.mock()
             .once()
             .withExactArgs(patient)
             .returns(Promise.resolve(patient));
         let service = new AccountService({ register: f }, {});
-        return service.registerPatient(patient)
+        return service.registerPatient(patient, physicianId)
             .then(val => {
                 expect(val.code).to.equal(HttpError.OK);
                 expect(val.data).to.exist;
@@ -28,7 +34,7 @@ describe('account-service patient tests', function() {
             .once()
             .returns(Promise.reject());
         let service = new AccountService({ register: f }, {});
-        return service.registerPatient({})
+        return service.registerPatient({}, "")
             .then(val => {
                 expect(val.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
                 expect(val.data).to.exist;

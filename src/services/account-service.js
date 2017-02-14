@@ -11,11 +11,16 @@ export default class {
         this._accountModel = accountModel;
     }
 
+    isPhysician(account) {
+        return this._accountModel.isPhysician(account);
+    }
+
     getAccountByEmail(email) {
         return this._accountModel.findOne({ email: email });
     }
 
-    registerPatient(patient) {
+    registerPatient(patient, physicianId) {
+        patient.physician = physicianId;
         return this._patientModel
             .register(patient)
             .then(createOkMessage, createErrorWrapperMessage);

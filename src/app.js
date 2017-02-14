@@ -91,9 +91,21 @@ export default class {
         this._setupSessionRoutes();
     }
 
+    _checkPhysician(req, res, next) {
+        if (!(req.user)) {
+            res.redirect(HttpError.UNAUTHORIZED, '/login');
+            return;
+        }
+        if (!_accountService.isPhysician(req.user)) {
+            res.redirect(HttpError.UNAUTHORIZED, '/login');
+            return;
+        }
+        next();
+    }
+
     _setupAccountRoutes() {
-        this._app.post('/api/v1/register/patient', (req, res) => {
-            this._accountService.registerPatient(req.body)
+        this._app.post('/api/v1/register/patient', this._checkPhysician, (req, res) => {
+            this._accountService.registerPatient(req.body, req.user._id)
                 .then(out => {
                     res.status(out.code)
                         .json(out.data);

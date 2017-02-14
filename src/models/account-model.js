@@ -42,6 +42,7 @@ AccountSchema.plugin(mongoose_unique, { message: errors.VALIDATION_ERROR_UNIQUE 
 AccountSchema.methods.authenticate = function(password) {
     return bcrypt.compareSync(password, this.password);
 }
+AccountSchema.statics.isPhysician = account => account.kind === PHYSICIAN_NAME;
 AccountSchema.statics.register = function(account) {
     if (account.password) {
         let p = bcrypt.hashSync(account.password);
@@ -54,12 +55,16 @@ export const Account = mongoose.model(ACCOUNT_NAME, AccountSchema);
 const PatientSchema = mongoose.Schema({
     physician: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: PHYSICIAN_NAME
+        ref: PHYSICIAN_NAME,
+        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     },
-    sessions: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: SESSION_NAME
-    }]
+    sessions: {
+        type: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: SESSION_NAME,
+        }],
+        default: []
+    }
 });
 
 const PhysicianSchema = mongoose.Schema({
