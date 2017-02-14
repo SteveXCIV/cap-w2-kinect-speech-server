@@ -4,6 +4,7 @@ import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
+import HttpError from 'standard-http-error';
 import { Strategy as LocalStrategy } from 'passport-local';
 
 let _accountService;
