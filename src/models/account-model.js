@@ -1,6 +1,8 @@
 import errors from './error-messages';
 import mongoose from 'mongoose';
 import mongoose_unique from 'mongoose-unique-validator';
+import bcrypt from 'bcrypt-nodejs';
+import SESSION_NAME from './session-model.js';
 
 // this is made freely available at http://emailregex.com/, it's a highly accurate email regex
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -8,7 +10,9 @@ const ACCOUNT_NAME = 'Account';
 const PATIENT_NAME = 'Patient';
 const PHYSICIAN_NAME = 'Physician';
 
-const Account = mongoose.Schema({
+const options = { discriminatorKey: 'kind' };
+
+const AccountSchema = mongoose.Schema({
     email: {
         type: String,
         match: [ EMAIL_REGEX, errors.VALIDATION_ERROR_BAD_EMAIL ],
@@ -33,7 +37,41 @@ const Account = mongoose.Schema({
         required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ],
         default: Date.now
     }
-});
-Account.plugin(mongoose_unique, { message: VALIDATION_ERROR_UNIQUE });
+}, options);
+AccountSchema.plugin(mongoose_unique, { message: errors.VALIDATION_ERROR_UNIQUE });
+AccountSchema.methods.authenticate = function(password) {
+    return bcrypt.compareSync(password, this.password);
+}
+AccountSchema.statics.register = function(account) {
+    if (account.password) {
+        let p = bcrypt.hashSync(account.password);
+        account.password = p;
+    }
+    return this.create(account);
+}
+export const Account = mongoose.model(ACCOUNT_NAME, AccountSchema);
 
-export const Account = mongoose.model(ACCOUNT_NAME, Account);
+const PatientSchema = mongoose.Schema({
+    physician: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: PHYSICIAN_NAME
+    },
+    sessions: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: SESSION_NAME
+    }]
+});
+
+const PhysicianSchema = mongoose.Schema({
+    patients: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: PATIENT_NAME
+    }]
+});
+PhysicianSchema.statics.findProfileById = function(physicianId, cb) {
+    return this.findById(physicianId)
+        .populate({ path: 'patients', select: '_id firstName lastName' });
+};
+
+export const Patient = Account.discriminator(PATIENT_NAME, PatientSchema);
+export const Physician = Account.discriminator(PHYSICIAN_NAME, PhysicianSchema);
