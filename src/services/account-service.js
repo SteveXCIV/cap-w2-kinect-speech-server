@@ -3,6 +3,7 @@ import {
     createErrorWrapperMessage,
     createNotFoundOrElse
 } from './response-generator';
+import passGen from 'generate-password';
 
 export default class {
     constructor(patientModel, physicianModel, accountModel) {
@@ -20,9 +21,18 @@ export default class {
     }
 
     registerPatient(patient, physicianId) {
+        // link up the patient data to the physician
         patient.physician = physicianId;
+        patient.temp = true;
+        let tempPass = passGen.generate();
+        patient.password = tempPass;
+
         return this._patientModel
             .register(patient)
+            .then(p => {
+                let np = Object.assign({ tempPass: tempPass }, p._doc);
+                return np;
+            })
             .then(createOkMessage, createErrorWrapperMessage);
     }
 

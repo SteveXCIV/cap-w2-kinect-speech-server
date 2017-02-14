@@ -58,6 +58,11 @@ const PatientSchema = mongoose.Schema({
         ref: PHYSICIAN_NAME,
         required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     },
+    temp: {
+        type: Boolean,
+        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ],
+        default: false
+    },
     sessions: {
         type: [{
             type: mongoose.Schema.Types.ObjectId,
