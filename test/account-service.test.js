@@ -18,13 +18,21 @@ describe('account-service patient tests', function() {
         let f = sinon.mock()
             .once()
             .withExactArgs(patient)
-            .returns(Promise.resolve(patient));
+            .returns(Promise.resolve({ _doc: patient}));
         let service = new AccountService({ register: f }, {});
         return service.registerPatient(patient, physicianId)
             .then(val => {
                 expect(val.code).to.equal(HttpError.OK);
                 expect(val.data).to.exist;
-                expect(val.data).to.deep.equal(patient);
+                expect(val.data._id).to.exist;
+                expect(val.data.firstName).to.exist;
+                expect(val.data.lastName).to.exist;
+                expect(val.data.physician).to.exist;
+                expect(val.data.tempPass).to.exist;
+                expect(val.data._id).to.equal(patient._id);
+                expect(val.data.firstName).to.equal(patient.firstName);
+                expect(val.data.lastName).to.equal(patient.lastName);
+                expect(val.data.physician).to.equal(patient.physician);
                 f.verify();
             });
     });
