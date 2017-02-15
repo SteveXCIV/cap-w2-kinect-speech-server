@@ -5,7 +5,7 @@
   "main": "build/main.js",
   "scripts": {
     "start": "node build/main.js",
-    "test": "mocha --full-trace --reporter spec --require babel-polyfill --compilers js:babel-register test/**/*.js"
+    "test": "mocha --full-trace --no-colors --reporter spec --require babel-polyfill --compilers js:babel-register test/**/*.js"
   },
   "repository": {
     "type": "git",
