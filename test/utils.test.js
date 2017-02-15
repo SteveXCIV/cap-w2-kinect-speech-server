@@ -21,6 +21,13 @@ describe('utils strip tests', function() {
         expect(testObj).to.contain.all.keys(['baz']);
         expect(testObj).not.to.contain.all.keys(['foo', 'bar']);
     });
+
+    it('should tolerate non-existent keys', function() {
+        let testObj = { foo: 1, bar: 'bar', baz: { a: 0, b: 1, c: 2 }};
+        utils.strip(testObj, ['foo', 'bar', 'quux']);
+        expect(testObj).to.contain.all.keys(['baz']);
+        expect(testObj).not.to.contain.all.keys(['foo', 'bar', 'quux']);
+    });
 });
 
 describe('utils stripClone tests', function() {
