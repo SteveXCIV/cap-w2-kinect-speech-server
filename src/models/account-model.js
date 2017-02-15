@@ -7,7 +7,7 @@ import SESSION_NAME from './session-model.js';
 // this is made freely available at http://emailregex.com/, it's a highly accurate email regex
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const ACCOUNT_NAME = 'Account';
-const PATIENT_NAME = 'Patient';
+export const PATIENT_NAME = 'Patient';
 const PHYSICIAN_NAME = 'Physician';
 
 const options = {
