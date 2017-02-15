@@ -68,6 +68,21 @@ describe('session-model tests', function() {
         });
     });
 
+    it('should be valid if Time is a valid Sortable Date string', function(done) {
+        let s = new Session({
+            BodySnapshots: [
+                {
+                    Joints: [{ JointType: 'AnkleLeft', X: 0.0, Y: 0.0, Z: 0.0 }],
+                    Time: "2017-02-15T17:41:14"
+                }
+            ]
+        });
+        s.validate(err => {
+            expect(err.errors['BodySnapshots.0.Time']).not.to.exist;
+            done();
+        });
+    });
+
     it('should be valid if Time is a valid locale-specific Date string', function(done) {
         let s = new Session({
             BodySnapshots: [
