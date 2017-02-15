@@ -4,6 +4,7 @@ import {
     createNotFoundOrElse
 } from './response-generator';
 import passGen from 'generate-password';
+import utils from '../utils/utils';
 
 export default class {
     constructor(patientModel, physicianModel, accountModel) {
@@ -21,7 +22,6 @@ export default class {
     }
 
     registerPatient(patient, physicianId) {
-        // link up the patient data to the physician
         patient.physician = physicianId;
         patient.temp = true;
         let tempPass = passGen.generate();
@@ -30,7 +30,8 @@ export default class {
         return this._patientModel
             .register(patient)
             .then(p => {
-                let np = Object.assign({ tempPass: tempPass }, p._doc);
+                let np = utils.stripClone(p._doc, ['password', 'sessions', 'temp']);
+                np['tempPass'] = tempPass;
                 return np;
             })
             .then(createOkMessage, createErrorWrapperMessage);
