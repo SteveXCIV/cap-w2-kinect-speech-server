@@ -53,7 +53,7 @@ describe('session-model tests', function() {
         });
     });
 
-    it('should be valid if Time is a valid ISO Date string', function(done) {
+    it('should be valid if Time is a valid ISO8601 Date string', function(done) {
         let s = new Session({
             BodySnapshots: [
                 {
