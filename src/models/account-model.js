@@ -10,7 +10,10 @@ const ACCOUNT_NAME = 'Account';
 const PATIENT_NAME = 'Patient';
 const PHYSICIAN_NAME = 'Physician';
 
-const options = { discriminatorKey: 'kind' };
+const options = {
+    discriminatorKey: 'kind',
+    versionKey: false
+};
 
 const AccountSchema = mongoose.Schema({
     email: {
@@ -70,14 +73,14 @@ const PatientSchema = mongoose.Schema({
         }],
         default: []
     }
-});
+}, options);
 
 const PhysicianSchema = mongoose.Schema({
     patients: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: PATIENT_NAME
     }]
-});
+}, options);
 PhysicianSchema.statics.findProfileById = function(physicianId, cb) {
     return this.findById(physicianId)
         .populate({ path: 'patients', select: '_id firstName lastName' });
