@@ -82,6 +82,11 @@ PhysicianSchema.statics.findProfileById = function(physicianId, cb) {
     return this.findById(physicianId)
         .populate({ path: 'patients', select: '_id firstName lastName' });
 };
+PhysicianSchema.statics.linkPatient = function(physicianId, patient, cb) {
+    return this
+        .findByIdAndUpdate(physicianId, { $push: { patients: patient._id } })
+        .then(() => patient);
+};
 
 export const Patient = Account.discriminator(PATIENT_NAME, PatientSchema);
 export const Physician = Account.discriminator(PHYSICIAN_NAME, PhysicianSchema);

@@ -19,7 +19,11 @@ describe('account-service patient tests', function() {
             .once()
             .withExactArgs(patient)
             .returns(Promise.resolve({ _doc: patient}));
-        let service = new AccountService({ register: f }, {});
+        let g = sinon.mock()
+            .once()
+            .withExactArgs(physicianId, { _doc: patient })
+            .returns(Promise.resolve({ _doc: patient }));
+        let service = new AccountService({ register: f }, { linkPatient: g });
         return service.registerPatient(patient, physicianId)
             .then(val => {
                 expect(val.code).to.equal(HttpError.OK);

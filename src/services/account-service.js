@@ -30,6 +30,9 @@ export default class {
         return this._patientModel
             .register(patient)
             .then(p => {
+                return this._physicianModel.linkPatient(physicianId, p);
+            })
+            .then(p => {
                 let np = utils.stripClone(p._doc, ['password', 'sessions', 'temp']);
                 np['tempPass'] = tempPass;
                 return np;
