@@ -39,3 +39,9 @@ export function createErrorWrapperMessage(error) {
     }
     return new HttpErrorMessage(code);
 }
+
+export function createBadRequestMissingRequiredMessage(property) {
+    let p = !!(property) ? `"${property}"` : 'a required field';
+    let msg = `Could not process request ${p} was missing.`;
+    return new HttpErrorMessage(HttpError.BAD_REQUEST, msg);
+}
