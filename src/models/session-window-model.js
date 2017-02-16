@@ -1,7 +1,6 @@
 import errors from './error-messages';
 import mongoose from 'mongoose';
 import PATIENT_NAME from './account-model';
-import SESSION_NAME from './session-model';
 
 const EXPIRATION_PERIOD = '6h';
 
@@ -17,6 +16,9 @@ const SessionWindow = mongoose.Schema({
         required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ],
         default: Date.now
     }
-}, { versionKey: false });
+},
+{
+    versionKey: false
+});
 
-export default mongoose.Model('SessionWindow', SessionWindow);
+export default mongoose.model('SessionWindow', SessionWindow);
