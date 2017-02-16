@@ -46,6 +46,7 @@ AccountSchema.methods.authenticate = function(password) {
     return bcrypt.compareSync(password, this.password);
 }
 AccountSchema.statics.isPhysician = account => account.kind === PHYSICIAN_NAME;
+AccountSchema.statics.isPatient = account => account.kind === PATIENT_NAME;
 AccountSchema.statics.register = function(account) {
     if (account.password) {
         let p = bcrypt.hashSync(account.password);

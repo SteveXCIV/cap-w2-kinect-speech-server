@@ -58,6 +58,10 @@ export default class {
         passport.use(new LocalStrategy({
             usernameField: 'email'
         }, this._localStrategy));
+        passport.use('no-session', new LocalStrategy({
+            usernameField: 'email',
+            session: false
+        }, this._localStrategy));
         passport.serializeUser(this._serializeUser);
         passport.deserializeUser(this._deserializeUser);
         this._app.use(passport.initialize());
@@ -125,6 +129,18 @@ export default class {
         });
     }
 
+    _checkPatient(req, res, next) {
+        if (!(req.user)) {
+            res.redirect(HttpError.UNAUTHORIZED, '/login');
+            return;
+        }
+        if (!_accountService.isPatient(req.user)) {
+            res.redirect(HttpError.UNAUTHORIZED, '/login');
+            return;
+        }
+        next();
+    }
+
     _setupSessionRoutes() {
         this._app.get('/api/v1/sessions', (req, res) => {
             this._sessionService.getAllSessions()
@@ -151,6 +167,17 @@ export default class {
                         .json(out.data);
                 })
         });
+
+        this._app.post('/api/v1/sessions/reserve',
+            passport.authenticate('no-session'),
+            this._checkPatient,
+            (req, res) => {
+                this._sessionService.createReservation(user._id)
+                    .then(out => {
+                        res.status(out.code)
+                            .json(out.data);
+                    });
+            });
     }
 
     _setupDevRoutes() {

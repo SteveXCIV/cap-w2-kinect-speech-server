@@ -17,6 +17,10 @@ export default class {
         return this._accountModel.isPhysician(account);
     }
 
+    isPatient(account) {
+        return this._accountModel.isPatient(account);
+    }
+
     getAccountByEmail(email) {
         return this._accountModel.findOne({ email: email });
     }
