@@ -4,7 +4,7 @@ import PATIENT_NAME from './account-model';
 
 const EXPIRATION_PERIOD = '6h';
 
-const SessionWindow = mongoose.Schema({
+const SessionReservation = mongoose.Schema({
     patient: {
         type: mongoose.Schema.Types.ObjectId,
         ref: PATIENT_NAME,
@@ -21,4 +21,4 @@ const SessionWindow = mongoose.Schema({
     versionKey: false
 });
 
-export default mongoose.model('SessionWindow', SessionWindow);
+export default mongoose.model('SessionReservation', SessionReservation);
