@@ -20,7 +20,5 @@ const SessionReservation = mongoose.Schema({
 {
     versionKey: false
 });
-SessionReservation.statics.reserve =
-    patientId => this.create({ patient: patientId });
 
 export default mongoose.model('SessionReservation', SessionReservation);

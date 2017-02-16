@@ -3,6 +3,7 @@ import {
     createErrorWrapperMessage,
     createNotFoundOrElse
 } from './response-generator';
+import utils from '../utils/utils';
 
 export default class {
     constructor(sessionModel, reservationModel) {
@@ -29,7 +30,8 @@ export default class {
     }
 
     createReservation(patientId) {
-        return this._reservationModel.reserve(patientId)
+        return this._reservationModel.create({ patient: patientId })
+            .then(r => utils.stripClone(r._doc, [ 'patient', 'createdAt' ]))
             .then(createOkMessage, createErrorWrapperMessage);
     }
 }

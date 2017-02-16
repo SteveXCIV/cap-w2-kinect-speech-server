@@ -172,7 +172,7 @@ export default class {
             passport.authenticate('no-session'),
             this._checkPatient,
             (req, res) => {
-                this._sessionService.createReservation(user._id)
+                this._sessionService.createReservation(req.user._id)
                     .then(out => {
                         res.status(out.code)
                             .json(out.data);
