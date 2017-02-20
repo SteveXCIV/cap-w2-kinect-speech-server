@@ -159,13 +159,21 @@ export default class {
                 });
         });
 
-        this._app.post('/api/v1/sessions', (req, res) => {
-            let session = req.body;
-            this._sessionService.createSession(session)
-                .then(out => {
-                    res.status(out.code)
-                        .json(out.data);
-                })
+        this._app.post(
+            '/api/v1/sessions',
+            passport.authenticate('no-session'),
+            this._checkPatient,
+            (req, res) => {
+                let session = req.body;
+                delete session.email;
+                delete session.password;
+                let userId = req.user._id;
+                session.Patient = userId;
+                this._sessionService.createSession(session)
+                    .then(out => {
+                        res.status(out.code)
+                            .json(out.data);
+                    })
         });
 
         // this._app.post('/api/v1/sessions/reserve',
