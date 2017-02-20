@@ -1,5 +1,11 @@
 import errors from './error-messages';
 import mongoose from 'mongoose';
+import {
+    AudioSnapshot,
+    BodySnapshot,
+    DistanceSnapshot,
+    Distance2Snapshot
+} from './snapshot-model';
 
 const options = {
     discriminatorKey: 'kind',

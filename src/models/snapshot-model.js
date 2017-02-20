@@ -7,21 +7,21 @@ const options = {
 
 const JointType = {
     values: [
-        'AnkleLeft',
-        'AnkleRight',
+        // 'AnkleLeft',
+        // 'AnkleRight',
         'ElbowLeft',
         'ElbowRight',
-        'FootLeft',
-        'FootRight',
+        // 'FootLeft',
+        // 'FootRight',
         'HandLeft',
         'HandRight',
         'HandTipLeft',
         'HandTipRight',
         'Head',
-        'HipLeft',
-        'HipRight',
-        'KneeLeft',
-        'KneeRight',
+        // 'HipLeft',
+        // 'HipRight',
+        // 'KneeLeft',
+        // 'KneeRight',
         'Neck',
         'ShoulderLeft',
         'ShoulderRight',
@@ -38,8 +38,14 @@ const JointType = {
 
 const RequiredNumber = {
     type: Number,
-    required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
-}
+    required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ],
+    default: 0.0
+};
+
+const RequiredDate = {
+    type: Date,
+    required: [ true, erorrs.VALIDATION_ERROR_MISSING_REQUIRED ]
+};
 
 const Joint = mongoose.Schema({
     JointType: {
@@ -57,20 +63,21 @@ export const BodySnapshot = mongoose.Schema({
         type: [ Joint ],
         required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     },
-    Time: {
-        type: Date,
-        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
-    }
+    Time: RequiredDate
 }, options);
 
 export const AudioSnapshot = mongoose.Schema({
-    Intensity: {
-        type: Number,
-        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ],
-        default: 0.0
-    },
-    Time: {
-        type: Date,
-        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
-    }
+    Intensity: RequiredNumber,
+    Time: RequiredDate
+}, options);
+
+export const DistanceSnapshot = mongoose.Schema({
+    Distance: RequiredNumber,
+    Time: RequiredDate
+}, options);
+
+export const Distance2Snapshot = mongoose.Schema({
+    HandToHandDistance: RequiredNumber,
+    HandsToSpineDistance: RequiredNumber,
+    Time: RequiredDate
 }, options);
