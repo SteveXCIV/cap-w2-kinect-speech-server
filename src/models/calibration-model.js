@@ -5,7 +5,7 @@ import {
     RequiredNumber
 } from './common';
 
-const CalibrationSchema = mongoose.Schema({
+export const Calibration = mongoose.Schema({
     AudioThreshold: RequiredNumber,
     EndTime: RequiredDate,
     MaxReachLeft: RequiredNumber,
@@ -14,5 +14,3 @@ const CalibrationSchema = mongoose.Schema({
     Radius: RequiredNumber,
     StartTime: RequiredDate
 });
-
-export const Calibration = mongoose.model('Calibration', CalibrationSchema);

@@ -13,7 +13,7 @@ const TrialSchema = mongoose.Schema({
         type: [ Objective ],
         required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     },
-    StartTime: RequiredDate,
+    StartTime: RequiredDate
 });
 
 export const Trial = mongoose.model('Trial', TrialSchema);

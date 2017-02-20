@@ -2,7 +2,7 @@ import errors from './error-messages';
 
 export const RequiredDate = {
     type: Date,
-    required: [ true, erorrs.VALIDATION_ERROR_MISSING_REQUIRED ]
+    required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
 };
 
 export const RequiredNumber = {

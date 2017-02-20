@@ -6,7 +6,7 @@ import {
     DistanceSnapshot,
     Distance2Snapshot
 } from './snapshot-model';
-import RequiredDate from './common';
+import { RequiredDate } from './common';
 
 const options = {
     discriminatorKey: 'kind',
