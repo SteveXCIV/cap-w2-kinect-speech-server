@@ -1,5 +1,9 @@
 import errors from './error-messages';
 import mongoose from 'mongoose';
+import {
+    RequiredDate,
+    RequiredNumber
+} from './common';
 
 const options = {
     _id: false
@@ -34,17 +38,6 @@ const JointType = {
         'WristRight',
     ],
     message: errors.VALIDATION_ERROR_INVALID_ENUM
-};
-
-const RequiredNumber = {
-    type: Number,
-    required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ],
-    default: 0.0
-};
-
-const RequiredDate = {
-    type: Date,
-    required: [ true, erorrs.VALIDATION_ERROR_MISSING_REQUIRED ]
 };
 
 const Joint = mongoose.Schema({

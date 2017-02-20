@@ -6,16 +6,12 @@ import {
     DistanceSnapshot,
     Distance2Snapshot
 } from './snapshot-model';
+import RequiredDate from './common';
 
 const options = {
     discriminatorKey: 'kind',
     versionKey: false
 };
-
-const RequiredDate = {
-    type: Date,
-    required: [ true, erorrs.VALIDATION_ERROR_MISSING_REQUIRED ]
-}
 
 const ObjectiveSchema = mongoose.Schema({
     AudioSnapshots: {
@@ -30,7 +26,7 @@ const ObjectiveSchema = mongoose.Schema({
     StartTime: RequiredDate
 }, options);
 
-const ObjectiveModel = mongoose.model('Objective', ObjectiveSchema);
+export const ObjectiveModel = mongoose.model('Objective', ObjectiveSchema);
 
 const DescribeObjectiveSchema = mongoose.Schema({
     Distances: {
