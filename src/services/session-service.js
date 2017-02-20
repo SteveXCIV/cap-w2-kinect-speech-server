@@ -6,9 +6,8 @@ import {
 import utils from '../utils/utils';
 
 export default class {
-    constructor(sessionModel, reservationModel) {
+    constructor(sessionModel) {
         this._sessionModel = sessionModel;
-        this._reservationModel = reservationModel;
     }
 
     createSession(session) {
@@ -27,11 +26,5 @@ export default class {
         return this._sessionModel
             .findById(sessionId)
             .then(createNotFoundOrElse, createErrorWrapperMessage);
-    }
-
-    createReservation(patientId) {
-        return this._reservationModel.create({ patient: patientId })
-            .then(r => utils.stripClone(r._doc, [ 'patient', 'createdAt' ]))
-            .then(createOkMessage, createErrorWrapperMessage);
     }
 }

@@ -168,16 +168,16 @@ export default class {
                 })
         });
 
-        this._app.post('/api/v1/sessions/reserve',
-            passport.authenticate('no-session'),
-            this._checkPatient,
-            (req, res) => {
-                this._sessionService.createReservation(req.user._id)
-                    .then(out => {
-                        res.status(out.code)
-                            .json(out.data);
-                    });
-            });
+        // this._app.post('/api/v1/sessions/reserve',
+        //     passport.authenticate('no-session'),
+        //     this._checkPatient,
+        //     (req, res) => {
+        //         this._sessionService.createReservation(req.user._id)
+        //             .then(out => {
+        //                 res.status(out.code)
+        //                     .json(out.data);
+        //             });
+        //     });
     }
 
     _setupDevRoutes() {
