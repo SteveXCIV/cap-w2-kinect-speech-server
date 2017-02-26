@@ -13,4 +13,4 @@ export const Calibration = mongoose.Schema({
     PointingZoneTimerSec: RequiredNumber,
     Radius: RequiredNumber,
     StartTime: RequiredDate
-});
+}, { _id: false });

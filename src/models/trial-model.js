@@ -18,7 +18,7 @@ const Trial = mongoose.Schema({
         required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     },
     StartTime: RequiredDate
-});
+}, { _id: false });
 
 Trial.path('Objectives').discriminator('DescribeObjective', DescribeObjective);
 Trial.path('Objectives').discriminator('LocateObjective', LocateObjective);

@@ -10,7 +10,8 @@ import { RequiredDate } from './common';
 
 const options = {
     discriminatorKey: 'kind',
-    versionKey: false
+    versionKey: false,
+    _id: false
 };
 
 export const Objective = mongoose.Schema({
