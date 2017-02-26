@@ -44,6 +44,10 @@ export default class {
             .then(createOkMessage, createErrorWrapperMessage);
     }
 
+    linkSessionToPatient(patientId, sessionId) {
+        return this._patientModel.linkSession(patientId, sessionId);
+    }
+
     getPatientById(patientId) {
         return this._patientModel
             .findById(patientId)

@@ -72,9 +72,14 @@ const PatientSchema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: SESSION_NAME,
         }],
+        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ],
         default: []
     }
 }, options);
+PatientSchema.statics.linkSession = function(patientId, sessionId, cb) {
+    return this
+        .findByIdAndUpdate(patientId, { $push: { sessions: sessionId } });
+}
 
 const PhysicianSchema = mongoose.Schema({
     patients: [{
