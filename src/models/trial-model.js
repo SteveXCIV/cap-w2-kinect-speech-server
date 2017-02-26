@@ -1,12 +1,16 @@
 import errors from './error-messages';
 import mongoose from 'mongoose';
-import { Objective } from './objective-model';
+import {
+    Objective,
+    DescribeObjective,
+    LocateObjective
+} from './objective-model';
 import {
     RequiredDate,
     RequiredNumber
 } from './common';
 
-export const Trial = mongoose.Schema({
+const Trial = mongoose.Schema({
     EndTime: RequiredDate,
     Difficulty: RequiredNumber,
     Objectives: {
@@ -15,3 +19,8 @@ export const Trial = mongoose.Schema({
     },
     StartTime: RequiredDate
 });
+
+Trial.path('Objectives').discriminator('DescribeObjective', DescribeObjective);
+Trial.path('Objectives').discriminator('LocateObjective', LocateObjective);
+
+export { Trial };

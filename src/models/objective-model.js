@@ -13,7 +13,7 @@ const options = {
     versionKey: false
 };
 
-const ObjectiveSchema = mongoose.Schema({
+export const Objective = mongoose.Schema({
     AudioSnapshots: {
         type: [ AudioSnapshot ],
         required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
@@ -26,29 +26,17 @@ const ObjectiveSchema = mongoose.Schema({
     StartTime: RequiredDate
 }, options);
 
-export const ObjectiveModel = mongoose.model('Objective', ObjectiveSchema);
-
-const DescribeObjectiveSchema = mongoose.Schema({
+export const DescribeObjective = mongoose.Schema({
     Distances: {
         type: [ Distance2Snapshot ],
         required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     }
 }, options);
 
-const LocateObjectiveSchema = mongoose.Schema({
+export const LocateObjective = mongoose.Schema({
     ActivationTime: RequiredDate,
     Distances: {
         type: [ DistanceSnapshot ],
         required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     }
 }, options);
-
-export const DescribeObjective = ObjectiveModel.discriminator(
-    'DescribeObjective',
-    DescribeObjectiveSchema
-);
-
-export const LocateObjective = ObjectiveModel.discriminator(
-    'LocateObjective',
-    LocateObjectiveSchema
-);
