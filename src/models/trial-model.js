@@ -1,12 +1,12 @@
 import errors from './error-messages';
 import mongoose from 'mongoose';
-import Objective from './objective-model';
+import { Objective } from './objective-model';
 import {
     RequiredDate,
     RequiredNumber
 } from './common';
 
-const TrialSchema = mongoose.Schema({
+export const Trial = mongoose.Schema({
     EndTime: RequiredDate,
     Difficulty: RequiredNumber,
     Objectives: {
@@ -15,5 +15,3 @@ const TrialSchema = mongoose.Schema({
     },
     StartTime: RequiredDate
 });
-
-export const Trial = mongoose.model('Trial', TrialSchema);

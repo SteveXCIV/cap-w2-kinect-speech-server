@@ -2,7 +2,7 @@ import errors from './error-messages';
 import mongoose from 'mongoose';
 import { RequiredDate } from './common';
 import { Calibration } from './calibration-model';
-import Trial from './trial-model';
+import { Trial } from './trial-model';
 import PATIENT_NAME from './account-model';
 
 const SessionSchema = mongoose.Schema({
