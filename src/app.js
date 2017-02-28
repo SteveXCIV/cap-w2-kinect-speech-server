@@ -11,7 +11,7 @@ let _accountService;
 
 // set the size limit for json objects to 1MB
 // we should never actually need that much in practice
-const JSON_SIZE_LIMIT = '1mb';
+const JSON_SIZE_LIMIT = '10mb';
 
 export default class {
     constructor(port, secret, accountService, sessionService, dev = false) {
@@ -46,8 +46,8 @@ export default class {
         this._app.use(logger('dev'));
 
         // Set up the middleware for JSON request/responses
-        this._app.use(bodyParser.json());
-        this._app.use(bodyParser.urlencoded({ extended: false }));
+        this._app.use(bodyParser.json({ limit: JSON_SIZE_LIMIT }));
+        this._app.use(bodyParser.urlencoded({ extended: false, limit: JSON_SIZE_LIMIT }));
 
         // set up middleware for cookies
         this._app.use(cookieParser());
