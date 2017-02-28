@@ -22,6 +22,11 @@ export default class {
             .then(createOkMessage, createErrorWrapperMessage);
     }
 
+    getSessionsByPatientId(patientId) {
+        return this._sessionModel.find({ Patient: patientId })
+                .then(createOkMessage, createErrorWrapperMessage);
+    }
+
     getSessionById(sessionId) {
         return this._sessionModel
             .findById(sessionId)
