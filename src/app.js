@@ -124,8 +124,15 @@ export default class {
                 })
         });
 
-        this._app.post('/api/v1/login/physician', passport.authenticate('local'), (req, res) => {
-            res.status(200).json(req.user);
+        this._app.post('/api/v1/login/physician',
+            passport.authenticate('local'),
+            this._checkPhysician,
+            (req, res) => {
+            this._accountService.getPhysicianProfileById(req.user._id)
+                .then(out => {
+                    res.status(out.code)
+                        .json(out.data);
+                })
         });
     }
 
