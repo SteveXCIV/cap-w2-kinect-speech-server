@@ -4,6 +4,7 @@ class HttpErrorMessage extends HttpError {
     constructor(code, message) {
         super(code);
         this.data = { message: message || this.message };
+        console.log(`Generated error message: HttpError Code ${code}; Message: ${message}`);
     }
 }
 
