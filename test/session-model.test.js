@@ -44,4 +44,60 @@ describe('session-model tests', function() {
             done();
         });
     });
+
+    it('should be invalid without EndTime', done => {
+        let s = new Session({
+            CalibrationData: calibration,
+            Patient: id,
+            StartTime: time,
+            Trials: [ trial ]
+        });
+
+        s.validate(err => {
+            expect(err.errors.EndTime).to.exist;
+            done();
+        });
+    });
+
+    it('should be invalid without Patient', done => {
+        let s = new Session({
+            CalibrationData: calibration,
+            EndTime: time,
+            StartTime: time,
+            Trials: [ trial ]
+        });
+
+        s.validate(err => {
+            expect(err.errors.Patient).to.exist;
+            done();
+        });
+    });
+
+    it('should be invalid without StartTime', done => {
+        let s = new Session({
+            CalibrationData: calibration,
+            EndTime: time,
+            Patient: id,
+            Trials: [ trial ]
+        });
+
+        s.validate(err => {
+            expect(err.errors.StartTime).to.exist;
+            done();
+        });
+    });
+
+    it('should be invalid without Trials', done => {
+        let s = new Session({
+            CalibrationData: calibration,
+            EndTime: time,
+            Patient: id,
+            StartTime: time
+        });
+
+        s.validate(err => {
+            expect(err.errors.Trials).to.exist;
+            done();
+        });
+    });
 });
