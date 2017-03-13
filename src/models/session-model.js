@@ -1,99 +1,30 @@
+import errors from './error-messages';
 import mongoose from 'mongoose';
+import { RequiredDate } from './common';
+import { Calibration } from './calibration-model';
+import { Trial } from './trial-model';
+import PATIENT_NAME from './account-model';
 
-const VALIDATION_ERROR_INVALID_ENUM = 'ValidationError: `{VALUE}` is not valid for {PATH}.'
-const VALIDATION_ERROR_MISSING_REQUIRED = 'ValidationError: Missing required value ({PATH}).'
-
-const JointType = {
-    values: [
-        'AnkleLeft',
-        'AnkleRight',
-        'ElbowLeft',
-        'ElbowRight',
-        'FootLeft',
-        'FootRight',
-        'HandLeft',
-        'HandRight',
-        'HandTipLeft',
-        'HandTipRight',
-        'Head',
-        'HipLeft',
-        'HipRight',
-        'KneeLeft',
-        'KneeRight',
-        'Neck',
-        'ShoulderLeft',
-        'ShoulderRight',
-        'SpineBase',
-        'SpineMid',
-        'SpineShoulder',
-        'ThumbLeft',
-        'ThumbRight',
-        'WristLeft',
-        'WristRight',
-    ],
-    message: VALIDATION_ERROR_INVALID_ENUM
-};
-
-const RequiredNumber = {
-    type: Number,
-    required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
-}
-
-const Joint = mongoose.Schema({
-    JointType: {
-        type: String,
-        enum: JointType,
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
+const SessionSchema = mongoose.Schema({
+    CalibrationData: {
+        type: Calibration,
+        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     },
-    X: RequiredNumber,
-    Y: RequiredNumber,
-    Z: RequiredNumber
-},
-{
-    _id: false
-});
-
-const BodySnapshot = mongoose.Schema({
-    Joints: {
-        type: [ Joint ],
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
+    EndTime: RequiredDate,
+    Patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: PATIENT_NAME,
+        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     },
-    Time: {
-        type: Date,
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
-    }
-},
-{
-    _id: false
-});
-
-const AudioSnapshot = mongoose.Schema({
-    Intensity: {
-        type: Number,
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ],
-        default: 0.0
-    },
-    Time: {
-        type: Date,
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
-    }
-},
-{
-    _id: false
-});
-
-const Session = mongoose.Schema({
-    BodySnapshots: {
-        type: [ BodySnapshot ],
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
-    },
-    AudioSnapshots: {
-        type: [ AudioSnapshot ],
-        required: [ true, VALIDATION_ERROR_MISSING_REQUIRED ]
+    StartTime: RequiredDate,
+    Trials: {
+        type: [ Trial ],
+        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ]
     }
 },
 {
     versionKey: false
 });
 
-export default mongoose.model('Session', Session);
+export const SESSION_NAME = 'Session';
+export default mongoose.model(SESSION_NAME, SessionSchema);

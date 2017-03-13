@@ -3,11 +3,14 @@ import HttpError from 'standard-http-error';
 class HttpErrorMessage extends HttpError {
     constructor(code, message) {
         super(code);
-        this.data = { message: message || this.message };
+        let msg = message || this.message;
+        this.data = { message: msg };
+        // console.log(`Generated error message: HttpError Code ${code}; Message: ${msg}`);
     }
 }
 
 function makeHumanReadableValidationError(err) {
+    if (!err) return false;
     if (err.name === 'ValidationError') {
         if (err.errors) {
             return Object.keys(err.errors).map(key => {
@@ -37,4 +40,10 @@ export function createErrorWrapperMessage(error) {
         return new HttpErrorMessage(code, e);
     }
     return new HttpErrorMessage(code);
+}
+
+export function createBadRequestMissingRequiredMessage(property) {
+    let p = !!(property) ? `"${property}"` : 'a required field';
+    let msg = `Could not process request ${p} was missing.`;
+    return new HttpErrorMessage(HttpError.BAD_REQUEST, msg);
 }

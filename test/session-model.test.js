@@ -9,141 +9,95 @@ import mongoose from 'mongoose';
 mongoose.Promise = global.Promise;
 
 describe('session-model tests', function() {
-    it('should be invalid without BodySnapshots', function(done) {
-        let s = new Session();
-        s.validate(err => {
-            expect(err.errors.BodySnapshots).to.exist;
-            done();
-        });
-    });
+    const time = Date.now();
+    const calibration = {
+        EndTime: time,
+        StartTime: time
+    };
+    const id = mongoose.Types.ObjectId();
+    const locateObjective = {
+        AudioSnapshots: [{ Time: time }],
+        BodySnapshots: [{
+            Joints: [{ JointType: 'ElbowLeft' }],
+            Time: time
+        }],
+        EndTime: time,
+        StartTime: time,
+        kind: 'LocateObjective'
+    };
+    const trial = {
+        EndTime: time,
+        Objectives: [ locateObjective ],
+        StartTime: time
+    };
 
-    it('should be invalid if BodySnapshots is empty array', function(done) {
-        let s = new Session({ BodySnapshots: [] });
-        s.validate(err => {
-            expect(err.errors.BodySnapshots).to.exist;
-            done();
-        });
-    });
-
-    it('should be invalid with malformed BodySnapshots (no Time)', function(done) {
+    it('should be invalid without CalibrationData', done => {
         let s = new Session({
-            BodySnapshots: [
-                {
-                    Joints: [{ JointType: 'AnkleLeft', X: 0.0, Y: 0.0, Z: 0.0 }],
-                }
-            ]
+            EndTime: time,
+            Patient: id,
+            StartTime: time,
+            Trials: [ trial ]
         });
-        s.validate(err => {
-            expect(err.errors['BodySnapshots.0.Time']).to.exist;
-            done();
-        })
-    });
 
-    it('should be invalid with malformed BodySnapshots (no Joints)', function(done) {
-        let s = new Session({
-            BodySnapshots: [
-                {
-                    Time: new Date()
-                }
-            ]
-        });
         s.validate(err => {
-            expect(err.errors['BodySnapshots.0.Joints']).to.exist;
+            expect(err.errors.CalibrationData).to.exist;
             done();
         });
     });
 
-    it('should be valid if Time is a valid ISO Date string', function(done) {
+    it('should be invalid without EndTime', done => {
         let s = new Session({
-            BodySnapshots: [
-                {
-                    Joints: [{ JointType: 'AnkleLeft', X: 0.0, Y: 0.0, Z: 0.0 }],
-                    Time: (new Date()).toISOString()
-                }
-            ]
+            CalibrationData: calibration,
+            Patient: id,
+            StartTime: time,
+            Trials: [ trial ]
         });
+
         s.validate(err => {
-            expect(err.errors['BodySnapshots.0.Time']).not.to.exist;
+            expect(err.errors.EndTime).to.exist;
             done();
         });
     });
 
-    it('should be valid if Time is a valid locale-specific Date string', function(done) {
+    it('should be invalid without Patient', done => {
         let s = new Session({
-            BodySnapshots: [
-                {
-                    Joints: [{ JointType: 'AnkleLeft', X: 0.0, Y: 0.0, Z: 0.0 }],
-                    Time: (new Date()).toDateString()
-                }
-            ]
-        })
+            CalibrationData: calibration,
+            EndTime: time,
+            StartTime: time,
+            Trials: [ trial ]
+        });
+
         s.validate(err => {
-            expect(err.errors['BodySnapshots.0.Time']).not.to.exist;
+            expect(err.errors.Patient).to.exist;
             done();
         });
     });
 
-    it('should be invalid with malformed Joints (missing positional data)', function(done) {
+    it('should be invalid without StartTime', done => {
         let s = new Session({
-            BodySnapshots: [
-                {
-                    Joints: [{ JointType: 'AnkleLeft', Y: 0.0, Z: 0.0 }],
-                    Time: new Date()
-                }
-            ]
+            CalibrationData: calibration,
+            EndTime: time,
+            Patient: id,
+            Trials: [ trial ]
         });
+
         s.validate(err => {
-            expect(err.errors['BodySnapshots.0.Joints.0.X']).to.exist;
+            expect(err.errors.StartTime).to.exist;
             done();
         });
     });
 
-    it('should be invalid with malformed Joints (invalid JointType)', function(done) {
+    it('should be invalid without Trials', done => {
         let s = new Session({
-            BodySnapshots: [
-                {
-                    Joints: [{ JointType: 'NotARealJointNameL0L', X: 0.0, Y: 0.0, Z: 0.0 }],
-                    Time: new Date()
-                }
-            ]
+            CalibrationData: calibration,
+            EndTime: time,
+            Patient: id,
+            StartTime: time
         });
+
         s.validate(err => {
-            expect(err.errors['BodySnapshots.0.Joints.0.JointType']).to.exist;
+            expect(err.errors.Trials).to.exist;
             done();
         });
-    });
-
-    it('should be accept and correct for missing intensity value', function(done) {
-        let s = new Session({
-            BodySnapshots: [
-                {
-                    Joints: [{ JointType: 'AnkleLeft', X: 0.0, Y: 0.0, Z: 0.0 }],
-                    Time: new Date()
-                }
-            ],
-            AudioSnapshots: [
-                {
-                    Time: new Date()
-                }
-            ]
-        });
-        expect(s.AudioSnapshots[0]).to.exist;
-        expect(s.AudioSnapshots[0].Intensity).to.exist;
-        expect(s.AudioSnapshots[0].Intensity).to.equal(0.0);
-        s.validate(err => done(err));
-    });
-
-    it('should be invalid with malformed AudioSnapshots (no Time)', function(done) {
-        let s = new Session({
-            AudioSnapshots: [
-                {
-                    Intensity: 0.0
-                }
-            ]
-        });
-        s.validate(err => {
-            expect(err.errors['AudioSnapshots.0.Time']).to.exist;
-            done();
-        })
     });
 });
