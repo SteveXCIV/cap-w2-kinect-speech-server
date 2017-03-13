@@ -10,9 +10,15 @@
 
 
 <body ng-app="ngCapstone" ng-controller="capstoneController">
-	<header ng-include="'nav.html'"></header>
-	<div ui-view></div>
-	<footer 
+	<div class="jumbotron">
+		<div class="container">
+			<div class="col-xs-offset-1 col-xs-10">
+				<div ui-view>
+					Loading page...
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 
 
@@ -20,7 +26,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.4.0/ui-bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.4.0/ui-bootstrap-tpls.min.js"></script>
 <!--<script src="http://angular-ui.github.io/ui-router/release/angular-ui-router.js"></script>-->
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.8/angular-ui-router.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.min.js"></script>
+<!--<script src="node_modules/chart.js/Chart.min.js"></script>
+<script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>-->
+<!--<script src="https://github.com/chartjs/Chart.js"></script>
+<script src="http://jtblin.github.io/angular-chart.js/"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script src="//cdn.jsdelivr.net/angular.chartjs/latest/angular-chart.min.js"></script>
+<script src="//code.angularjs.org/1.4.0/angular-cookies.js"></script>
 
 <script src="app.js"></script>
 <script src="scripts/capstoneController.js"></script>
@@ -30,5 +43,7 @@
 <script src="scripts/playerCtrl.js"></script>
 <script src="scripts/sessionCtrl.js"></script>
 <script src="scripts/sessionFactory.js"></script>
+<script src="scripts/loginCtrl.js"></script>
+<script src="scripts/loginService.js"></script>
 
 </html>

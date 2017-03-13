@@ -4,7 +4,7 @@ angular
 
 		function getData() {
 			//return $http.get('http://localhost/api/v1/sessions');
-			return $http.get('data/session.json');
+			return $http.get('data/BodyAudio.json');
 		}
 
 		return {

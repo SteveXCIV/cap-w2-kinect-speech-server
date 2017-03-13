@@ -1,9 +1,10 @@
+<header ng-include="'nav.html'"></header>
 <div class="well">
 	<h1> {{ title }} </h1>
 	<p><strong>Player: </strong>{{ sessiondata.Player }}</p>
 	<p><strong>Date: </strong>{{ sessiondata.Date | date }}</p>
-	<p><strong>Level: 2</strong></p>
-	<p><strong>Game Completion Time: </strong></p>
+	<p><strong>Level: </strong></p>
+	<p><strong>Session Duration: </strong></p>
 </div>
 
 <!--
@@ -21,44 +22,76 @@
 </div>
 -->
 
-<div class="well">
-	<h1> {{ "Range of Motion: Right Hand" }} </h1>
-	<div class="chart" style="width:{{width}}px; height:{{height}}px;">
 
-		<!-- Labels -->
-		<div class="y" style="width:{{height}}px;">{{yAxis}}</div>
-		<div class="x">{{xAxis}}</div>
+<button type="button" class="btn btn-default" ng-click="showCaptureTimePlot = !showCaptureTimePlot">Completion Time and Audio Intensity</button>
+<button type="button" class="btn btn-default" ng-click="showRangePlot = !showRangePlot">Range of Motion</button>
+<button type="button" class="btn btn-default" ng-click="showSpinePlot = !showSpinePlot">Spinal Deviation</button>
 
-		<!-- Data -->
-		<div ng-repeat="dot in righthand" class="dot" style="bottom:{{dot.value / max * height}}px; left:{{($index + 0.5) / data.length * width}}px;"></div>
 
+<div ng-show="showCaptureTimePlot == true">
+	<div class="well">
+		<!--<h3> {{ "Average Object Capture Time and Audio Intensity" }} </h3>-->
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="well">
+						<canvas id="line" class="chart-line" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options" chart-dataset-override="datasetOverride" chart-click="onClick"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 
 
-<div class="well"  ng-repeat="sample in snapshots">
-	<p><strong>Time Stamp: </strong>{{ sample.Time }}</p>
-	<table>
-		<tr>
-			<th>Joint Type</th>
-			<th>X Position</th>
-			<th>Y Position</th>
-			<th>Z Position</th>
-		</tr>
-		<tr>
-			<td>{{ sample.Joints[0].JointType }}</td>
-			<td>{{ sample.Joints[0].X }}</td>
-			<td>{{ sample.Joints[0].Y }}</td>
-			<td>{{ sample.Joints[0].Z }}</td>
-		</tr>
-		<tr>
-			<td>{{ sample.Joints[1].JointType }}</td>
-			<td>{{ sample.Joints[1].X }}</td>
-			<td>{{ sample.Joints[1].Y }}</td>
-			<td>{{ sample.Joints[1].Z }}</td>
-		</tr>
-	</table>
+<div ng-show="showRangePlot == true">
+	<div class="well">
+		<!--<h3> {{ "Range of Motion" }} </h3>-->
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-6">
+					<div class="well">
+						<h5 align="center"> {{ "Left Hand" }} </h5>
+						<canvas id="base" class="chart-bubble" chart-data="lefthand" chart-options="options2" chart-dataset-override="datasetOverride1" chart-colors="colors"></canvas>
+					</div>
+				</div>
+				<div class="col-xs-6">
+					<div class="well">
+						<h5 align="center"> {{ "Right Hand" }} </h5>
+						<canvas id="base" class="chart-bubble" chart-data="righthand" chart-options="options2" chart-colors="colors"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
+
+<div ng-show="showSpinePlot == true">
+	<div class="well">
+		<!--<h3> {{ "Range of Motion" }} </h3>-->
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-6">
+					<div class="well">
+						<h5 align="center"> {{ "Spine Mid" }} </h5>
+						<canvas id="base" class="chart-bubble" chart-data="spinemid" chart-options="options2" chart-colors="colors"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<!--
+<h3>{{ 'The JSON Object' }}</h3>
+<pre>{{ lefthand | json }}</pre>
 
 <h3>{{ 'The JSON Object' }}</h3>
 <pre>{{ righthand | json }}</pre>
+-->
+
+
+
+
