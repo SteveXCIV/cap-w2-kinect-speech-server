@@ -11,17 +11,26 @@ angular
 	.state('login', {
 		url: "/login",
 		templateUrl: 'login.html',
-		controller: "loginCtrl"
+		controller: "loginCtrl",
+		data: {
+			requireLogin: false
+		}
 	})
 	.state('physician', {
 		url: '/physician',
 		templateUrl: 'physician.html',
-		controller: 'physicianCtrl'
+		controller: 'physicianCtrl',
+		data: {
+			requireLogin: true
+		}
 	})
 	.state('player', {
 		url: '/player',
 		templateUrl: 'player.html',
-		controller: 'playerCtrl'
+		controller: 'playerCtrl',
+		data: {
+			requireLogin: true
+		}
 	})
 	.state('session', {
 		url: '/session',
