@@ -1,27 +1,35 @@
-import data from '../data';
+import {
+    createOkMessage,
+    createErrorWrapperMessage,
+    createNotFoundOrElse
+} from './response-generator';
+import utils from '../utils/utils';
 
 export default class {
-    constructor(model) {
-        this.model = data;
-        this._idCounter = this._getNextId();
+    constructor(sessionModel) {
+        this._sessionModel = sessionModel;
     }
 
     createSession(session) {
-        let id = this._idCounter++;
-        session['id'] = id;
-        this.model.push(session);
-        return session;
+        return this._sessionModel
+            .create(session)
+            .then(createOkMessage, createErrorWrapperMessage);
     }
 
     getAllSessions() {
-        return this.model;
+        return this._sessionModel
+            .find()
+            .then(createOkMessage, createErrorWrapperMessage);
+    }
+
+    getSessionsByPatientId(patientId) {
+        return this._sessionModel.find({ Patient: patientId })
+                .then(createOkMessage, createErrorWrapperMessage);
     }
 
     getSessionById(sessionId) {
-        return this.model.find(s => s.id === sessionId);
-    }
-
-    _getNextId() {
-        return this.model.reduce((acc, x) => x.id >= acc ? 1 + x.id : acc, 0);
+        return this._sessionModel
+            .findById(sessionId)
+            .then(createNotFoundOrElse, createErrorWrapperMessage);
     }
 }
