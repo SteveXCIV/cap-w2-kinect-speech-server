@@ -46,6 +46,10 @@ export default class {
         this._app.use(logger('dev'));
 
         // Set up the middleware for JSON request/responses
+        this._app.use(bodyParser.json());
+        this._app.use(bodyParser.urlencoded({ extended: false }));
+
+        this._app.use(express.static(__dirname + '/public'));
         this._app.use(bodyParser.json({ limit: JSON_SIZE_LIMIT }));
         this._app.use(bodyParser.urlencoded({ extended: false, limit: JSON_SIZE_LIMIT }));
 
@@ -136,6 +140,14 @@ export default class {
                     res.status(out.code)
                         .json(out.data);
                 })
+        });
+
+        this._app.get('/api/v1/loggedIn/physician', (req, res) => {
+            if (!!(req.user) && _accountService.isPhysician(req.user)) {
+                res.status(HttpError.OK).json(req.user._id);
+            } else {
+                res.status(HttpError.NOT_FOUND).json("0");
+            }
         });
     }
 

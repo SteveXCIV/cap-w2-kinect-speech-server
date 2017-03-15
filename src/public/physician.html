@@ -1,0 +1,17 @@
+	<header ng-include="'nav.html'"></header>
+	<div class="well">
+		<h1> {{ title }} </h1>
+	</div>
+<!--
+	<div class="well">
+		<p> Main page that the physician will see when they log in, it will have a list of patients/players.</p>
+		<p> Click on a player to be brought to player page. </p>
+	</div>-->
+<!--
+	<div class="well">
+		<canvas id="line" class="chart-line" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options" chart-dataset-override="datasetOverride" chart-click="onClick">
+		</canvas>
+	</div>-->
+
+	<h3>{{ 'Game Data Object - for end to end testing purposes' }}</h3>
+	<pre>{{ gamedata | json }}</pre>
