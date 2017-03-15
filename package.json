@@ -33,6 +33,9 @@
     "sinon": "^1.17.7"
   },
   "dependencies": {
+    "angular-chart.js": "^1.1.1",
+    "body-parser": "^1.15.2",
+    "chart.js": "^2.5.0",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",

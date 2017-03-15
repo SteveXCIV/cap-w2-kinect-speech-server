@@ -1,0 +1,13 @@
+	<header ng-include="'nav.html'"></header>
+<div class="well">
+	<h1> {{ title }} </h1>
+	<p> Page to display details and progression for a single player/patient, it will have a list of sessions. </p>
+	<p> Click on a session to be brought to session page. </p>
+</div>
+
+<div class="well">
+	<h2> Progress Overview </h2>
+	<canvas id="bar" class="chart-bar"
+	chart-data="data" chart-labels="labels" chart-series="series" chart-options="options">
+	</canvas>
+</div>
