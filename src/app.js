@@ -46,9 +46,6 @@ export default class {
         this._app.use(logger('dev'));
 
         // Set up the middleware for JSON request/responses
-        this._app.use(bodyParser.json());
-        this._app.use(bodyParser.urlencoded({ extended: false }));
-
         this._app.use(express.static(__dirname + '/public'));
         this._app.use(bodyParser.json({ limit: JSON_SIZE_LIMIT }));
         this._app.use(bodyParser.urlencoded({ extended: false, limit: JSON_SIZE_LIMIT }));
