@@ -55,6 +55,13 @@ export default class {
     }
 
     registerPhysician(physician) {
+        if (!physician.verifyPassword ||
+            physician.verifyPassword !== physician.password) {
+            let fail = createErrorWrapperMessage(
+                'Confirmation password must match password.');
+            return Promise.resolve(fail);
+        }
+
         return this._physicianModel
             .register(physician)
             .then(createOkMessage, createErrorWrapperMessage);
