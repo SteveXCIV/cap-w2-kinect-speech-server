@@ -6,6 +6,7 @@ import session from 'express-session';
 import passport from 'passport';
 import HttpError from 'standard-http-error';
 import { Strategy as LocalStrategy } from 'passport-local';
+import { createErrorWrapperMessage } from './services/response-generator';
 
 let _accountService;
 
@@ -125,8 +126,26 @@ export default class {
         this._app.post('/api/v1/register/physician', (req, res) => {
             this._accountService.registerPhysician(req.body)
                 .then(out => {
-                    res.status(out.code)
-                        .json(out.data);
+                    // TODO: Need a more ergonomic way to weave this in
+                    // checks for an OK error code and then tries to login
+                    if (out.code == 200) {
+                        req.login(out.data, err => {
+                            if (err) {
+                                console.log('Account created, but login error', err);
+                                let newOut = createErrorWrapperMessage(
+                                    'Failed to log in the new account.'
+                                );
+                                res.status(newOut.code)
+                                    .json(newOut.data);
+                            } else {
+                                res.status(out.code)
+                                    .json(out.data);
+                            }
+                        });
+                    } else {
+                        res.status(out.code)
+                            .json(out.data);
+                    }
                 })
         });
 

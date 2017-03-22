@@ -8,8 +8,7 @@ angular
             registerService.register($scope.email, $scope.password, $scope.verifyPassword, $scope.firstName, $scope.lastName)
                 .then(function(response) {
                     $scope.dataLoading = false;
-                    console.log("success");
-                    console.log(response);
+                    $location.url('/physician');
                 },
                 function(error) {
                     $scope.dataLoading = false;
