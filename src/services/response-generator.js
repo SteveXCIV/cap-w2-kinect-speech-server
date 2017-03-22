@@ -4,6 +4,9 @@ class HttpErrorMessage extends HttpError {
     constructor(code, message) {
         super(code);
         let msg = message || this.message;
+        if (!(msg instanceof Array)) {
+            msg = [ msg ];
+        }
         this.data = { message: msg };
         // console.log(`Generated error message: HttpError Code ${code}; Message: ${msg}`);
     }
@@ -11,6 +14,7 @@ class HttpErrorMessage extends HttpError {
 
 function makeHumanReadableValidationError(err) {
     if (!err) return false;
+    if (!err.name) return err;
     if (err.name === 'ValidationError') {
         if (err.errors) {
             return Object.keys(err.errors).map(key => {

@@ -16,6 +16,14 @@ angular
 			requireLogin: false
 		}
 	})
+    .state('register', {
+        url: '/register',
+        templateUrl: 'register.html',
+        controller: 'registerCtrl',
+        data: {
+            requireLogin: false
+        }
+    })
 	.state('physician', {
 		url: '/physician',
 		templateUrl: 'physician.html',
@@ -71,7 +79,7 @@ angular
 	])
 .config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider, $stateProvider) {
 	$stateProvider
-	
+
 	.state('dashboard', {
 		url: "/dashboard",
 		template: 'dashboard.html',

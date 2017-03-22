@@ -16,6 +16,8 @@ describe('response-generator createErrorWrapperMessage tests', function () {
         expect(msg.code).to.exist;
         expect(msg.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
         expect(msg.data.message).to.exist;
+        expect(msg.data.message).to.be.instanceof(Array);
+        expect(msg.data.message).to.have.lengthOf(1);
     });
 
     it('should handle null/undefined errors', function(){
@@ -23,6 +25,19 @@ describe('response-generator createErrorWrapperMessage tests', function () {
         expect(msg.code).to.exist;
         expect(msg.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
         expect(msg.data.message).to.exist;
+        expect(msg.data.message).to.be.instanceof(Array);
+        expect(msg.data.message).to.have.lengthOf(1);
+    });
+
+    it('should wrap errors that are not ValidationError', function(){
+        const err = 'foobar';
+        let msg = createErrorWrapperMessage(err);
+        expect(msg.code).to.exist;
+        expect(msg.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
+        expect(msg.data.message).to.be.instanceof(Array);
+        expect(msg.data.message).to.have.lengthOf(1);
+        expect(msg.data.message).to.exist;
+        expect(msg.data.message).to.contain(err);
     });
 
     it('should produce a special message for a ValidationError', function() {
@@ -32,16 +47,24 @@ describe('response-generator createErrorWrapperMessage tests', function () {
         expect(msg.code).to.exist;
         expect(msg.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
         expect(msg.data.message).to.exist;
-        expect(msg.data.message).to.equal(errName);
+        expect(msg.data.message).to.be.instanceof(Array);
+        expect(msg.data.message).to.have.lengthOf(1);
+        expect(msg.data.message).to.contain(errName);
     });
 
     it('should list the messages of internal ValidationError instances', function() {
-        let error = { name: 'ValidationError', errors: { '0': { message: 'foobar' }, '1': { name: 'error1'}, '2': {} } };
+        let error = {
+            name: 'ValidationError',
+            errors: { '0': { message: 'foobar' },
+            '1': { name: 'error1'},
+            '2': {} }
+        };
         let msg = createErrorWrapperMessage(error);
         expect(msg.code).to.exist;
         expect(msg.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
         expect(msg.data.message).to.exist;
         expect(msg.data.message).to.be.instanceof(Array);
+        expect(msg.data.message).to.have.lengthOf(3);
         expect(msg.data.message).to.contain('foobar');
         expect(msg.data.message).to.contain('error1');
         expect(msg.data.message).to.contain('2');
@@ -83,7 +106,7 @@ describe('response-generator createOkMessage tests', function() {
     });
 });
 
-describe('response-generator createBadRequestMissingRequiredMessage tests', function() {
+describe('response-generator createBadRequestMissingRequiredMessage tests',function() {
     it('should always return with code 400', function() {
         let msg1 = createBadRequestMissingRequiredMessage();
         expect(msg1.code).to.exist;
@@ -104,7 +127,9 @@ describe('response-generator createBadRequestMissingRequiredMessage tests', func
         expect(msg.code).to.equal(HttpError.BAD_REQUEST);
         expect(msg.data).to.exist;
         expect(msg.data.message).to.exist;
-        expect(msg.data.message).to.contain("foobar");
+        expect(msg.data.message).to.be.instanceof(Array);
+        expect(msg.data.message).to.have.lengthOf(1);
+        expect(msg.data.message[0]).to.contain("foobar");
     });
 
     it('should create a generic error message with no supplied property', function() {

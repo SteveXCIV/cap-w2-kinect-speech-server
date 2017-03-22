@@ -91,7 +91,13 @@ describe('account-service patient tests', function() {
 
 describe('account-service physician tests', function() {
     it('should return code 200 for the physician it registers', function() {
-        let physician = { _id: "1234567890", firstName: "foo", lastName: "bar" };
+        let physician = {
+            _id: "1234567890",
+            firstName: "foo",
+            lastName: "bar",
+            password: "abcd",
+            verifyPassword: "abcd"
+        };
         let f = sinon.mock()
             .once()
             .withExactArgs(physician)
@@ -111,8 +117,10 @@ describe('account-service physician tests', function() {
             .once()
             .returns(Promise.reject());
         let service = new AccountService({}, { register: f });
-        return service.registerPhysician({})
-            .then(val => {
+        return service.registerPhysician({
+            password: "abc",
+            verifyPassword: "abc"
+        }).then(val => {
                 expect(val.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
                 expect(val.data).to.exist;
                 expect(val.data.message).to.exist;
