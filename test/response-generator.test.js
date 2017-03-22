@@ -25,6 +25,15 @@ describe('response-generator createErrorWrapperMessage tests', function () {
         expect(msg.data.message).to.exist;
     });
 
+    it('should wrap errors that are not ValidationError', function(){
+        const err = 'foobar';
+        let msg = createErrorWrapperMessage(err);
+        expect(msg.code).to.exist;
+        expect(msg.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
+        expect(msg.data.message).to.exist;
+        expect(msg.data.message).to.equal(err);
+    });
+
     it('should produce a special message for a ValidationError', function() {
         const errName = 'ValidationError';
         let error = { name: errName };
@@ -36,7 +45,12 @@ describe('response-generator createErrorWrapperMessage tests', function () {
     });
 
     it('should list the messages of internal ValidationError instances', function() {
-        let error = { name: 'ValidationError', errors: { '0': { message: 'foobar' }, '1': { name: 'error1'}, '2': {} } };
+        let error = {
+            name: 'ValidationError',
+            errors: { '0': { message: 'foobar' },
+            '1': { name: 'error1'},
+            '2': {} }
+        };
         let msg = createErrorWrapperMessage(error);
         expect(msg.code).to.exist;
         expect(msg.code).to.equal(HttpError.INTERNAL_SERVER_ERROR);
@@ -83,7 +97,7 @@ describe('response-generator createOkMessage tests', function() {
     });
 });
 
-describe('response-generator createBadRequestMissingRequiredMessage tests', function() {
+describe('response-generator createBadRequestMissingRequiredMessage tests',function() {
     it('should always return with code 400', function() {
         let msg1 = createBadRequestMissingRequiredMessage();
         expect(msg1.code).to.exist;

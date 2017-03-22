@@ -11,6 +11,7 @@ class HttpErrorMessage extends HttpError {
 
 function makeHumanReadableValidationError(err) {
     if (!err) return false;
+    if (!err.name) return err;
     if (err.name === 'ValidationError') {
         if (err.errors) {
             return Object.keys(err.errors).map(key => {
