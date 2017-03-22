@@ -24,40 +24,19 @@ angular
         });*/
 
         $http.post('/api/v1/login/physician', { email: email, password: password }).then(function (response) {
-            console.log("successmsg" + response);
+            console.log(response);
             if(response.data) {
                 response.message = "Post Data Submitted Successfully!";
             }
             callback(response);
         },function(response) {
-            console.log("errormsg" + response);
+            console.log(response);
             response.message = "Errorrrrrr";
             //callback(response);
         });
 
 
     };
-
-/*
-    service.SetCredentials = function (email, password) {
-        var authdata = Base64.encode(email + ':' + password);
-
-        $rootScope.globals = {
-            currentUser: {
-                email: email,
-                authdata: authdata
-            }
-        };
-
-        $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
-        $cookieStore.put('globals', $rootScope.globals);
-    };*/
-
-    /*service.ClearCredentials = function () {
-            $rootScope.globals = {};
-            $cookieStore.remove('globals');
-            $http.defaults.headers.common.Authorization = 'Basic ';
-    };*/
 
     return service;
 

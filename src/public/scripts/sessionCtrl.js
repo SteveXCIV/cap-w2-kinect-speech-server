@@ -1,47 +1,130 @@
 angular
 .module('ngCapstone')
 .controller('sessionCtrl', function($scope, sessionFactory) {
-
-	$scope.title = 'Session Breakdown';
-	$scope.sessiondata;
-	$scope.bodysnapshots;
+	
+	$scope.sessionindex = 3;
+	$scope.title = 'Session ' + $scope.sessionindex + ' Breakdown';
 	$scope.righthand = [];
 	$scope.lefthand = [];
 	$scope.spinemid = [];
+	$scope.intensity = [];
+	$scope.range = [];
+	$scope.rangeintensity = [];
+	$scope.timelabels = [];
+	$scope.precision = [];
 
-	$scope.labels = ["2.42", "3.29", "4.48", "5.46", "6.39", "7.99", "8.46", "9.29", "10.48", "11.46", "12.39", "13.99", "14.46"];
-	$scope.series = ['Capture Time', 'Audio Intensity'];
-	
-	$scope.data = [
-	[30, 26, 25, 28, 23, 24, 22, 23, 24, 22, 24, 20, 23],
-	[28, 38, 40, 49, 46, 47, 43, 45, 43, 42, 45, 46, 43]
-	];
+	sessionFactory.getData().then(function(data) {
+		$scope.sessiondata = data.data[$scope.sessionindex];
+		$scope.start = new Date($scope.sessiondata.StartTime)
+		$scope.end = new Date($scope.sessiondata.EndTime);
+		$scope.duration = msConverter($scope.end - $scope.start);
+		
+		$scope.objectives = $scope.sessiondata.Trials[0].Objectives;
+		console.log($scope.objectives.length);
+		for (var i = 0; i < $scope.objectives.length; i++) {
+			angular.forEach($scope.objectives[i], function(value, key) {
+				if (key === "kind" && value === "LocateObjective") {
+					$scope.activationtime = new Date($scope.objectives[i].ActivationTime);
+					$scope.locatestart = new Date($scope.objectives[i].StartTime);
+					$scope.locateend = new Date($scope.objectives[i].EndTime);
+					$scope.reactiontime = msConverter($scope.activationtime - $scope.locatestart);
+					$scope.locatecompletiontime = msConverter($scope.locateend - $scope.locatestart);
+					//$scope.accuracy.push([{}]); //accuracy of hand(s) position while in activation time window vs time
+					//for (j = 0; j < $scope.objectives[i].BodySnapshots.length; j++) {
+						//$scope.precision.push([{x: $scope.BodySnapshots[j].Joints[3].X, y: $scope.BodySnapshots[j].Joints[3].Y, r: (($scope.BodySnapshots[j].Joints[3].Z)-1.2)*5}]);
+					//};
+					$scope.bodysnapshots = $scope.objectives[i].BodySnapshots;
+					for (var s = 0; s < $scope.bodysnapshots.length; s++) { 
+						for (var j = 0; j < 15; j++) { 
+							angular.forEach($scope.bodysnapshots[s].Joints[j], function(value, key) {
+								if (key === "JointType" && value === "HandRight") {
+									//$scope.righthand.push({Time: $scope.bodysnapshots[s].Time, X: $scope.bodysnapshots[s].Joints[j].X, Y: $scope.bodysnapshots[s].Joints[j].Y});
+									//$scope.righthand.push({x: $scope.bodysnapshots[s].Joints[j].X, y: $scope.bodysnapshots[s].Joints[j].Y});
+									$scope.righthand.push([{x: $scope.bodysnapshots[s].Joints[j].X, y: $scope.bodysnapshots[s].Joints[j].Y, r: (($scope.bodysnapshots[s].Joints[j].Z)-1.2)*5}]);
+								};
+								if (key === "JointType" && value === "HandLeft") {
+									$scope.lefthand.push([{x: $scope.bodysnapshots[s].Joints[j].X, y: $scope.bodysnapshots[s].Joints[j].Y, r: (($scope.bodysnapshots[s].Joints[j].Z)-1.2)*5}]);
+								};
+								if (key === "JointType" && value === "SpineMid") {
+									$scope.spinemid.push([{x: $scope.bodysnapshots[s].Joints[j].X, y: $scope.bodysnapshots[s].Joints[j].Y, r: (($scope.bodysnapshots[s].Joints[j].Z)-1.2)*5}]);
+								};
+							});
+						};
+					};
+
+				};
+				if (key === "kind" && value === "DescribeObjective") {
+					$scope.describestart = new Date($scope.objectives[i].StartTime);
+					$scope.describeend = new Date($scope.objectives[i].EndTime);
+					$scope.describecompletiontime = msConverter($scope.locateend - $scope.locatestart);
+					//range of motion (hand to hand distance) and volume intensity over the duration of the task
+					for (var j = 0; j < $scope.objectives[i].Distances.length; j++) {
+						$scope.range.push($scope.objectives[i].Distances[j].HandToHandDistance);
+						$scope.currenttime = new Date($scope.objectives[i].Distances[j].Time);
+						$scope.timelabels.push(msConverter($scope.currenttime - new Date($scope.objectives[i].Distances[0].Time)));
+					};
+					for (var j = 0; j < $scope.objectives[i].AudioSnapshots.length; j++) {
+						$scope.intensity.push($scope.objectives[i].AudioSnapshots[j].Intensity);
+					};
+					$scope.averageintensity = Average($scope.intensity);
+					$scope.rangeintensity = [$scope.range].concat([$scope.intensity]);
+					$scope.rangeintensityseries = ['Hand to Hand Distance', 'Audio Intensity'];
+					//completion time and average audio intensity
+
+				};
+			});
+		};
+	}, function(error) {
+		console.log(error);
+	});
+
+
+	function msConverter(ms) {
+		var min = Math.floor(ms / 60000);
+		var sec = ((ms % 60000) / 1000).toFixed(0);
+		return min + ":" + (sec < 10 ? '0' : '') + sec;
+	}
+
+	function Average(array) {
+		var sum = 0;
+		for(var a = 0; a < array.length; a++){sum += array[a];}
+			var average = (sum / array.length); return average;
+	}
+
 
 	$scope.onClick = function (points, evt) {
 		console.log(points, evt);
 	};
 
-	$scope.datasetOverride = [
+	$scope.rangeintensityoverride = [
 	{ 
 		yAxisID: 'y-axis-1', 
-		borderColor: "#FF6384", 
-		backgroundColor:"rgba(220,220,220,0)",
-		pointBackgroundColor: "rgba(220,220,220,0)",
-		pointHoverBackgroundColor: "rgba(220,220,220,0)",
-		pointBorderColor: "#fff",
-		pointHoverBorderColor: "rgba(220,220,220,0)"
+		borderColor: "rgb(4, 141, 183)", //blue
+		pointBackgroundColor: "rgb(4, 141, 183)", //blue
+		
+		backgroundColor:"rgba(220,220,220,0)", //light grey
+		
+		pointBorderColor: "#fff", //white
+		pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
+		pointHoverBackgroundColor: "rgb(4, 141, 183)" //blue
 		//scaleShowGridLines: false,
 		//pointDot: false,
 		//bezierCurve: false
 	},
 	{ 
-		yAxisID: 'y-axis-2', 
-		hoverBorderColor: "rgba(255,99,132,1)", 
-		backgroundColor:"rgba(220,220,220,0)", 
-		hoverBackgroundColor: "#FF6384"
+		yAxisID: 'y-axis-2',
+		borderColor: "rgb(213, 223, 61)", //light green
+		pointBackgroundColor: "rgb(213, 223, 61)", //light green
+
+		backgroundColor:"rgba(220,220,220,0)", //light grey
+
+		pointBorderColor: "#fff", //white
+		pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
+		pointHoverBackgroundColor: "rgb(213, 223, 61)" //light green
 	}
 
 	];
+
 
 
 	$scope.datasetOverride1 = [
@@ -53,16 +136,16 @@ angular
 	}
 	];
 
-	$scope.options = {
+	$scope.rangeintensityoptions = {
 		title: {
 			display: true,
-			text: 'Average Object Capture Time and Audio Intensity vs. Time'
+			text: 'Hand to Hand Distance and Audio Intensity vs. Time'
 		},
 		scales: {
 			yAxes: [{
 				scaleLabel: {
 					display: true,
-					labelString: 'Average Capture Time'
+					labelString: 'Hand to Hand Distance'
 				},
 				id: 'y-axis-1',
 				type: 'linear',
@@ -81,6 +164,7 @@ angular
 			}]
 		}
 	};
+
 
 	$scope.options2 = {
 		title: {
@@ -112,40 +196,7 @@ angular
 	};
 
 
-	sessionFactory.getData().then(function(data) {
-		$scope.bodysnapshots = data.data.BodySnapshots;
-		$scope.audiosnapshots = data.data.AudioSnapshots;
-		//console.log('body length ' + $scope.bodysnapshots.length);
-		//console.log('audio length ' + $scope.audiosnapshots.length);
-		for (s = 0; s < $scope.bodysnapshots.length; s++) { 
-			for (j = 0; j < 24; j++) { 
-				angular.forEach($scope.bodysnapshots[s].Joints[j], function(value, key) {
-					if (key === "JointType" && value === "HandRight") {
-						//$scope.righthand.push({Time: $scope.bodysnapshots[s].Time, X: $scope.bodysnapshots[s].Joints[j].X, Y: $scope.bodysnapshots[s].Joints[j].Y});
-						$scope.righthand.push([{x: $scope.bodysnapshots[s].Joints[j].X, y: $scope.bodysnapshots[s].Joints[j].Y, r: (($scope.bodysnapshots[s].Joints[j].Z)-1.2)*10}]);
-						//$scope.righthand.push({x: $scope.bodysnapshots[s].Joints[j].X, y: $scope.bodysnapshots[s].Joints[j].Y});
-					};
-					if (key === "JointType" && value === "HandLeft") {
-						//$scope.lefthand.push({Time: $scope.bodysnapshots[s].Time, X: $scope.bodysnapshots[s].Joints[j].X, Y: $scope.bodysnapshots[s].Joints[j].Y});
-						$scope.lefthand.push([{x: $scope.bodysnapshots[s].Joints[j].X, y: $scope.bodysnapshots[s].Joints[j].Y, r: (($scope.bodysnapshots[s].Joints[j].Z)-1.2)*10}]);
-						//$scope.lefthand.push({x: $scope.bodysnapshots[s].Joints[j].X, y: $scope.bodysnapshots[s].Joints[j].Y});
-					};
-					if (key === "JointType" && value === "SpineMid") {
-						$scope.spinemid.push([{x: $scope.bodysnapshots[s].Joints[j].X, y: $scope.bodysnapshots[s].Joints[j].Y, r: (($scope.bodysnapshots[s].Joints[j].Z)-1.2)*10}]);
-					};
-				});
-			};
-		};
 
-	}, function(error) {
-		console.log(error);
-	});
-
-
-	$scope.width = 600;
-	$scope.height = 400;
-	$scope.yAxis = "Vertical Position";
-	$scope.xAxis = "Lateral Position"
 
 
 	var newdata = {
