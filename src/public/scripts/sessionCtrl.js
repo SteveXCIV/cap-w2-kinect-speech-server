@@ -3,7 +3,6 @@ angular
 .controller('sessionCtrl', function($scope, sessionFactory) {
 	
 	$scope.sessionindex = 3;
-	$scope.title = 'Session ' + $scope.sessionindex + ' Breakdown';
 	$scope.righthand = [];
 	$scope.lefthand = [];
 	$scope.spinemid = [];
@@ -20,7 +19,7 @@ angular
 		$scope.duration = msConverter($scope.end - $scope.start);
 		
 		$scope.objectives = $scope.sessiondata.Trials[0].Objectives;
-		console.log($scope.objectives.length);
+		console.log('session index is ' + $scope.sessionindex);
 		for (var i = 0; i < $scope.objectives.length; i++) {
 			angular.forEach($scope.objectives[i], function(value, key) {
 				if (key === "kind" && value === "LocateObjective") {

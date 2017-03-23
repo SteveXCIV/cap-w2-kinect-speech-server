@@ -1,21 +1,21 @@
-<div class="well">
-	<header ng-include="'nav.html'"></header>
-	<h1> {{ title }} </h1>
-</div>
-
-
 <!--
 <h3>{{ 'The JSON Object' }}</h3>
 <pre>{{ timelabels | json }}</pre>
 -->
 
-
 <div class="container-fluid">
 	<div class="row row-offcanvas row-offcanvas-right">
+	
+		<div class="well">
+			<header ng-include="'nav.html'"></header>
+			<h1> {{ 'Session ' + $scope.sessionindex + ' Breakdown' }} </h1>
+		</div>
+
 		<div class="col-xs-12 col-sm-9 col-sm-push-3">
 			<button type="button" class="pull-left btn btn-default visible-xs" data-toggle="offcanvas" aria-expanded="false" aria-controls="navbar">
 				<i class="fa fa-navicon"></i>
 			</button>
+
 			<div class="row">
 				<div ng-show="showDetails == true">
 					<div class="col-xs-6 col-lg-4">
@@ -31,7 +31,7 @@
 					</div><!--/.col-xs-6.col-lg-4-->
 				</div>
 
-				<!--<div ng-show="showHandDistance == true">-->
+				<div ng-show="showHandDistance == true">
 					<div class="col-xs-12 col-lg-4">
 						<div class="container">
 							<div class="row">
@@ -44,6 +44,7 @@
 						</div>
 					</div>
 				</div><!--/.col-xs-6.col-lg-4-->
+
 				<div ng-show="showRangePlot == true">
 					<div class="col-xs-12 col-lg-4">
 						<div class="container">
@@ -84,33 +85,59 @@
 				</div><!--/.col-xs-6.col-lg-4-->
 
 			</div><!--/row-->
+
+			<!--<select ng-model="example1" bs-selectbox>
+				<option value="1">One</option>
+				<option value="2">Two</option>
+			</select>
+
+			<div class="btn-group">
+				<a class="btn dropdown-toggle">
+					Actions
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a>Action 1</a></li>
+					<li><a>Action 2</a></li>
+				</ul>
+			</div>
+
+			<div class="btn-group" ng-class='{open: open}'>
+				<button class="btn">Action</button>
+				<button class="btn dropdown-toggle" data-toggle="dropdown" ng-click='open=!open'>
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu">
+					<li><a href="#">Action</a></li>
+					<li><a href="#">Another action</a></li>
+					<li><a href="#">Something else here</a></li>
+					<li class="divider"></li>
+					<li><a href="#">Separated link</a></li>
+				</ul>
+			</div>-->
 		</div><!--/.col-xs-12.col-sm-9-->
 
 		<div class="col-xs-6 col-sm-3 col-sm-pull-9 sidebar-offcanvas" id="sidebar">
 			<ul class="list-group">
+				<button type="button" class="list-group-item" 
+				ng-click="showDetails = !showDetails">Details</button>
+				<button type="button" class="list-group-item" 
+				ng-click="showLocatePlots = !showLocatePlots">Locate Objective Data</button>
+				<div ng-show="showLocatePlots == true">
+					<button type="button" class="list-group-item" 
+					ng-click="showRangePlot = !showRangePlot">Range of Motion</button>
+					<button type="button" class="list-group-item" 
+					ng-click="showSpinePlot = !showSpinePlot">Spinal Deviation</button>
+				</div>
+				<button type="button" class="list-group-item" 
+				ng-click="showDescribePlots = !showDescribePlots">Describe Objective Data</button>
+				<div ng-show="showDescribePlots == true">
+					<button type="button" class="list-group-item" 
+					ng-click="showHandDistance = !showHandDistance">Hand to Hand Distance and Audio Intensity</button>
+				</div>
 				
-				<button type="button" class="list-group-item" ng-click="showDetails = !showDetails">Details</button>
-				<button type="button" class="list-group-item" ng-click="showHandDistance = !showHandDistance">Hand to Hand Distance and Audio Intensity</button>
-				<button type="button" class="list-group-item" ng-click="showRangePlot = !showRangePlot">Range of Motion</button>
-				<button type="button" class="list-group-item" ng-click="showSpinePlot = !showSpinePlot">Spinal Deviation</button>
-				<!--<a href="#" class="list-group-item active">Details</a>
-				<a href="#" class="list-group-item">Link</a>
-				<a href="#" class="list-group-item">Link</a>
-				<a href="#" class="list-group-item">Link</a>
-				<li class="list-group-item">First item</li>
-				<li class="list-group-item">Second item</li>
-				<li class="list-group-item">Third item</li>
-				<li class="list-group-item" ui-sref-active="active"><a ui-sref="logout">Log Out</a></li>
-				<li class="list-group-item" data-toggle="collapse" data-target="#service" class="collapsed"><i class="fa fa-globe fa-lg"></i> Services <span class="arrow"></span></a>
-				</li>
-				<ul class="sub-menu collapse" id="service">
-					<li>New Service 1</li>
-					<li>New Service 2</li>
-					<li>New Service 3</li>
-				</ul>-->
 			</ul>
 		</div><!--/.sidebar-offcanvas-->
-
 
 	</div><!--/row-->
 
@@ -119,8 +146,5 @@
 	<footer>
 		<p>&copy; 2017 Kinect Speech Capstone Group</p>
 	</footer>
-
-
-
 
 </div><!--/.container-->
