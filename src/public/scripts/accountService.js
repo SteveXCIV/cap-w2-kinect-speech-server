@@ -1,5 +1,9 @@
 (function() {
     function accountService($http, $rootScope) {
+        function getUser() {
+            return $rootScope.loggedInUser;
+        }
+
         function login(email, password) {
             let req = {
                 email: email,
@@ -19,7 +23,11 @@
             return $http.post('/api/v1/register/physician', req);
         }
 
-        return {login: login, register: register};
+        return {
+            getUser: getUser,
+            login: login,
+            register: register
+        };
     }
 
     angular.module('ngCapstone').factory('accountService', accountService);
