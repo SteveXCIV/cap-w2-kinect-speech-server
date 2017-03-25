@@ -3,12 +3,12 @@
         '$scope',
         '$rootScope',
         '$location',
-        'loginService',
-        function($scope, $rootScope, $location, loginService) {
+        'accountService',
+        function($scope, $rootScope, $location, accountService) {
             $scope.login = function() {
                 $scope.dataLoading = true;
                 console.log("trying to log in");
-                loginService.Login($scope.email, $scope.password, function(response) {
+                accountService.login($scope.email, $scope.password, function(response) {
                     console.log(response);
                     if (response.data) {
                         $location.path('/physician');

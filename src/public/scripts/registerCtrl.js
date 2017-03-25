@@ -3,8 +3,8 @@
         '$scope',
         '$rootScope',
         '$location',
-        'registerService',
-        function($scope, $rootScope, $location, registerService) {
+        'accountService',
+        function($scope, $rootScope, $location, accountService) {
             $scope.register = function() {
                 $scope.dataLoading = true;
                 console.log($scope);
