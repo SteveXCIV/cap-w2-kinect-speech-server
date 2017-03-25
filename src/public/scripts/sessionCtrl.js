@@ -1,7 +1,7 @@
 (function() {
     angular.module('ngCapstone').controller('sessionCtrl', function($scope, sessionFactory) {
 
-        $scope.sessionindex = 2;
+        $scope.sessionindex = 3;
         $scope.righthand = [];
         $scope.lefthand = [];
         $scope.spinemid = [];
@@ -35,8 +35,6 @@
                         $scope.reactiontime = msConverter($scope.activationtime - $scope.locatestart);
                         $scope.locatecompletiontime = msConverter($scope.locateend - $scope.locatestart);
 
-                        //$scope.accuracy.push([{}]); //accuracy of hand(s) position while in activation time window vs time
-
                         $scope.bodysnapshots = $scope.objectives[i].BodySnapshots;
 
                         for (j = 0; j < $scope.objectives[i].Distances.length; j++) {
@@ -50,17 +48,11 @@
                         $scope.precisionlabels = timeLabeler($scope.precisionlabels);
                         $scope.precisionseries = ['Hand to Object Distance'];
 
-                        //console.log($scope.objectives[0].Distances);
-                        //console.log($scope.precision);
-                        //console.log($scope.precisionlabels);
-
                         for (var s = 0; s < $scope.bodysnapshots.length; s++) {
                             for (var j = 0; j < 15; j++) {
                                 angular.forEach($scope.bodysnapshots[s].Joints[j], function(value, key) {
                                     if (key === "JointType" && value === "HandRight") {
-                                        //$scope.righthand.push({Time: $scope.bodysnapshots[s].Time, X: $scope.bodysnapshots[s].Joints[j].X, Y: $scope.bodysnapshots[s].Joints[j].Y});
-                                        //$scope.righthand.push({x: $scope.bodysnapshots[s].Joints[j].X, y: $scope.bodysnapshots[s].Joints[j].Y});
-                                        $scope.righthand.push([
+                                    	$scope.righthand.push([
                                             {
                                                 x: $scope.bodysnapshots[s].Joints[j].X,
                                                 y: $scope.bodysnapshots[s].Joints[j].Y,
@@ -95,7 +87,6 @@
                         $scope.describestart = new Date($scope.objectives[i].StartTime);
                         $scope.describeend = new Date($scope.objectives[i].EndTime);
                         $scope.describecompletiontime = msConverter($scope.locateend - $scope.locatestart);
-                        //range of motion (hand to hand distance) and volume intensity over the duration of the task
                         for (var j = 0; j < $scope.objectives[i].Distances.length; j++) {
                             $scope.range.push($scope.objectives[i].Distances[j].HandToHandDistance);
                             $scope.currenttime = new Date($scope.objectives[i].Distances[j].Time);
@@ -104,14 +95,10 @@
                         for (var j = 0; j < $scope.objectives[i].AudioSnapshots.length; j++) {
                             $scope.intensity.push($scope.objectives[i].AudioSnapshots[j].Intensity);
                         };
-                        $scope.averageintensity = Average($scope.intensity);
+                        $scope.averageintensity = averageCalculator($scope.intensity);
                         $scope.handtohandaudio = [$scope.range].concat([$scope.intensity]);
                         $scope.handtohandaudiolabels = timeLabeler($scope.handtohandaudiolabels);
                         $scope.handtohandaudioseries = ['Hand to Hand Distance', 'Audio Intensity'];
-                        //completion time and average audio intensity
-
-                        //console.log($scope.handtohandaudio);
-                        //console.log($scope.handtohandaudiolabels);
 
                     };
                 });
@@ -122,18 +109,13 @@
 
         $scope.precisionoverride = [
             {
-                yAxisID: 'y-axis-1',
+                yAxisID: 'yaxis',
                 borderColor: "rgb(4, 141, 183)", //blue
                 pointBackgroundColor: "rgb(4, 141, 183)", //blue
-
                 backgroundColor: "rgba(220,220,220,0)", //light grey
-
                 pointBorderColor: "#fff", //white
                 pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
                 pointHoverBackgroundColor: "rgb(4, 141, 183)" //blue
-                //scaleShowGridLines: false,
-                //pointDot: false,
-                //bezierCurve: false
             }
         ];
         $scope.precisionoptions = {
@@ -148,14 +130,31 @@
                             display: true,
                             labelString: 'Hand to Hand Distance'
                         },
-                        id: 'y-axis-1',
+                        id: 'yaxis',
                         type: 'linear',
                         display: true,
                         position: 'left'
                     }
-                ]
+                ]/*,
+                xAxes: [
+                    {
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time (ms)'
+                        },
+                        id: 'x-axis-1',
+                        type: 'linear',
+                        display: true,
+                        position: 'bottom'
+                    }
+                ]*/
             }
         };
+
+		/*function overrideDefiner(yaxisnumber, maincolor) {
+			overridearray.push({});
+			return [overridearray];
+		}*/
 
         $scope.handtohandaudiooverride = [
             {
@@ -182,7 +181,6 @@
                 pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
                 pointHoverBackgroundColor: "rgb(213, 223, 61)" //light green
             }
-
         ];
         $scope.handtohandaudiooptions = {
             title: {
@@ -251,6 +249,7 @@
                         position: 'bottom'
                     }
                 ]
+
             }
         };
 
@@ -262,7 +261,7 @@
                 : '') + sec;
         }
 
-        function Average(array) {
+        function averageCalculator(array) {
             var sum = 0;
             for (var a = 0; a < array.length; a++) {
                 sum += array[a];
@@ -275,34 +274,11 @@
 			for(var i = 0; i < timearray.length-1; i++){
 				if (timearray[i] == timearray[i+1]) {timearray[i] = ''};
 			}
+			timearray[timearray.length-1] = ''; //find a better way to do this
 			return timearray;
 		}
 
-        $scope.onClick = function(points, evt) {
-            console.log(points, evt);
-        };
+        $scope.onClick = function(points, evt) {console.log(points, evt);};
 
     });
-
-    /*
-    var RightHandSnapshot = {};
-    		var foundjoint = false;
-    		for (i = 0; i < $scope.bodysnapshots.length; i++) {
-    			for (j = 0; j < 24; j++) {
-    				angular.forEach($scope.bodysnapshots[i].Joints[j], function(value, key) {
-    					if (key === "JointType" && value === "ThumbRight") {
-    						foundjoint = true;
-    					};
-    					if (foundjoint) {
-    						console.log("found the joint")
-    						console.log(key + ': ' + value);
-    						if (key === "X") {RightHandSnapshot.X = value;}
-    						if (key === "Y") {RightHandSnapshot.Y = value;}
-    						//if (key === "Z") {$scope.righthand.push({RightHandSnapshot:{Z: value}});}
-    						$scope.righthand.push({RightHandSnapshot: RightHandSnapshot});
-    					};
-    					foundjoint = false;
-    				});
-    			};
-    		};*/
 })();
