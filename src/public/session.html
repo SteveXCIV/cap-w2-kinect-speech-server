@@ -1,150 +1,125 @@
 <!--
 <h3>{{ 'The JSON Object' }}</h3>
-<pre>{{ timelabels | json }}</pre>
+<pre>{{ handtohandaudiolabels | json }}</pre>
 -->
+<header ng-include="'nav.html'"></header><hr><hr><hr>
 
 <div class="container-fluid">
-	<div class="row row-offcanvas row-offcanvas-right">
-	
-		<div class="well">
-			<header ng-include="'nav.html'"></header>
-			<h1> {{ 'Session ' + $scope.sessionindex + ' Breakdown' }} </h1>
+	<div class="col-md-9 col-md-push-3">
+
+
+
+		<div ng-show="showCalibration == true">
+			<div class="col-xs-6 col-lg-4">
+				<div class="well">
+					<h2>Calibration Data</h2>
+					<p><strong>Pointing Zone Radius: </strong>{{ radius }}</p>
+					<p><strong>Pointing Zone Timer: </strong>{{ pointingtimer }}</p>
+					<p><strong>Audio Threshold: </strong>{{ audiothreshold }}</p>
+				</div>
+			</div><!--/.col-xs-6.col-lg-4-->
 		</div>
 
-		<div class="col-xs-12 col-sm-9 col-sm-push-3">
-			<button type="button" class="pull-left btn btn-default visible-xs" data-toggle="offcanvas" aria-expanded="false" aria-controls="navbar">
-				<i class="fa fa-navicon"></i>
-			</button>
-
-			<div class="row">
-				<div ng-show="showDetails == true">
-					<div class="col-xs-6 col-lg-4">
-						<div class="jumbotron">
-							<h2>Details</h2>
-							<p><strong>Session ID: </strong>{{ sessiondata._id }}</p>
-							<p><strong>Patient ID: </strong>{{ sessiondata.Patient }}</p>
-							<p><strong>Date: </strong>{{ start | date }}</p>
-							<p><strong>Time: </strong>{{ start | date: 'shortTime' }}{{ " - " }}{{ end | date: 'shortTime' }}</p>
-							<p><strong>Duration: </strong>{{ duration }}</p>
+		<div ng-show="showHandDistance == true">
+			<div class="col-xs-12 col-lg-4">
+				<div class="container">
+					<div class="row">
+						<div class="col-xs-12">
+							<div class="well">
+								<canvas id="line" class="chart-line" chart-data="handtohandaudio" chart-labels="handtohandaudiolabels" chart-series="handtohandaudioseries" chart-options="handtohandaudiooptions" chart-dataset-override="handtohandaudiooverride" chart-click="onClick"></canvas>
+							</div>
 						</div>
-						<p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-					</div><!--/.col-xs-6.col-lg-4-->
+					</div>
 				</div>
-
-				<div ng-show="showHandDistance == true">
-					<div class="col-xs-12 col-lg-4">
-						<div class="container">
-							<div class="row">
-								<div class="col-xs-12">
-									<div class="well">
-										<canvas id="line" class="chart-line" chart-data="rangeintensity" chart-labels="timelabels" chart-series="rangeintensityseries" chart-options="rangeintensityoptions" chart-dataset-override="rangeintensityoverride" chart-click="onClick"></canvas>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div><!--/.col-xs-6.col-lg-4-->
-
-				<div ng-show="showRangePlot == true">
-					<div class="col-xs-12 col-lg-4">
-						<div class="container">
-							<div class="row">
-								<div class="col-xs-12">
-									<div class="well">
-										<h5 align="center"> {{ "Left Hand" }} </h5>
-										<canvas id="base" class="chart-bubble" chart-data="lefthand" chart-options="options2" chart-dataset-override="datasetOverride1" chart-colors="colors"></canvas>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-xs-12">
-									<div class="well">
-										<h5 align="center"> {{ "Right Hand" }} </h5>
-										<canvas id="base" class="chart-bubble" chart-data="righthand" chart-options="options2" chart-colors="colors"></canvas>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div><!--/.col-xs-6.col-lg-4-->
-
-				<div ng-show="showSpinePlot == true">
-					<div class="col-xs-12 col-lg-4">
-						<div class="container">
-							<div class="row">
-								<div class="col-xs-12">
-									<div class="well">
-										<h5 align="center"> {{ "Spine Mid" }} </h5>
-										<canvas id="base" class="chart-bubble" chart-data="spinemid" chart-options="options2" chart-colors="colors"></canvas>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!--<p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>-->
-				</div><!--/.col-xs-6.col-lg-4-->
-
-			</div><!--/row-->
-
-			<!--<select ng-model="example1" bs-selectbox>
-				<option value="1">One</option>
-				<option value="2">Two</option>
-			</select>
-
-			<div class="btn-group">
-				<a class="btn dropdown-toggle">
-					Actions
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu">
-					<li><a>Action 1</a></li>
-					<li><a>Action 2</a></li>
-				</ul>
 			</div>
+		</div>
 
-			<div class="btn-group" ng-class='{open: open}'>
-				<button class="btn">Action</button>
-				<button class="btn dropdown-toggle" data-toggle="dropdown" ng-click='open=!open'>
-					<span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu">
-					<li><a href="#">Action</a></li>
-					<li><a href="#">Another action</a></li>
-					<li><a href="#">Something else here</a></li>
-					<li class="divider"></li>
-					<li><a href="#">Separated link</a></li>
-				</ul>
-			</div>-->
-		</div><!--/.col-xs-12.col-sm-9-->
-
-		<div class="col-xs-6 col-sm-3 col-sm-pull-9 sidebar-offcanvas" id="sidebar">
-			<ul class="list-group">
-				<button type="button" class="list-group-item" 
-				ng-click="showDetails = !showDetails">Details</button>
-				<button type="button" class="list-group-item" 
-				ng-click="showLocatePlots = !showLocatePlots">Locate Objective Data</button>
-				<div ng-show="showLocatePlots == true">
-					<button type="button" class="list-group-item" 
-					ng-click="showRangePlot = !showRangePlot">Range of Motion</button>
-					<button type="button" class="list-group-item" 
-					ng-click="showSpinePlot = !showSpinePlot">Spinal Deviation</button>
+		<div ng-show="showPrecisionPlot == true">
+			<div class="col-xs-12 col-lg-4">
+				<div class="container">
+					<div class="row">
+						<div class="col-xs-12">
+							<div class="well">
+								<canvas id="line" class="chart-line" chart-data="precision" chart-labels="precisionlabels" chart-series="precisionseries" chart-options="precisionoptions" chart-dataset-override="precisionoverride" chart-click="onClick"></canvas>
+							</div>
+						</div>
+					</div>
 				</div>
-				<button type="button" class="list-group-item" 
-				ng-click="showDescribePlots = !showDescribePlots">Describe Objective Data</button>
-				<div ng-show="showDescribePlots == true">
-					<button type="button" class="list-group-item" 
-					ng-click="showHandDistance = !showHandDistance">Hand to Hand Distance and Audio Intensity</button>
+			</div>
+		</div>
+
+		<div ng-show="showRangePlot == true">
+			<div class="col-xs-12 col-lg-4">
+				<div class="container">
+					<div class="row">
+						<div class="col-xs-12">
+							<div class="well">
+								<h5 align="center"> {{ "Left Hand" }} </h5>
+								<canvas id="base" class="chart-bubble" chart-data="lefthand" chart-options="rangeoptions" chart-dataset-override="rangeoverride" chart-colors="colors"></canvas>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<div class="well">
+								<h5 align="center"> {{ "Right Hand" }} </h5>
+								<canvas id="base" class="chart-bubble" chart-data="righthand" chart-options="rangeoptions" chart-colors="colors"></canvas>
+							</div>
+						</div>
+					</div>
 				</div>
-				
-			</ul>
-		</div><!--/.sidebar-offcanvas-->
+			</div>
+		</div>
 
-	</div><!--/row-->
+		<div ng-show="showSpinePlot == true">
+			<div class="col-xs-12 col-lg-4">
+				<div class="container">
+					<div class="row">
+						<div class="col-xs-12">
+							<div class="well">
+								<h5 align="center"> {{ "Spine Mid" }} </h5>
+								<canvas id="base" class="chart-bubble" chart-data="spinemid" chart-options="rangeoptions" chart-colors="colors"></canvas>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--<p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>-->
+		</div>
 
-	<hr>
+		<div ng-show="showDetails == true">
+			<div class="col-xs-6 col-lg-4">
+				<div class="well">
+					<h2>Details</h2>
+					<p><strong>Session ID: </strong>{{ sessiondata._id }}</p>
+					<p><strong>Patient ID: </strong>{{ sessiondata.Patient }}</p>
+				</div>
+			</div><!--/.col-xs-6.col-lg-4-->
+		</div>
 
-	<footer>
-		<p>&copy; 2017 Kinect Speech Capstone Group</p>
-	</footer>
+	</div>
 
-</div><!--/.container-->
+	<div class="col-md-3 col-md-pull-9 well">
+		<h1> {{ "Session " + sessionindex + " Breakdown" }} </h1>
+		<p><strong>Date: </strong>{{ start | date }}</p>
+		<p><strong>Time: </strong>{{ start | date: 'shortTime' }}{{ " - " }}{{ end | date: 'shortTime' }}</p>
+		<p><strong>Duration: </strong>{{ duration }}</p>
+		
+		<div class="btn-group-vertical">
+			<button type="button" class="btn" ng-model="calibration" uib-btn-radio="''" uncheckable ng-click="showCalibration = !showCalibration">Calibration Information</button>
+			
+			<button type="button" class="btn" ng-model="locate" uib-btn-radio="''" uncheckable ng-click="showLocatePlots = !showLocatePlots">Locate Objective Data</button>
+			<button type="button" class="btn btn-default" ng-model="precision" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showPrecisionPlot = !showPrecisionPlot">Precision of Hands</button>
+			<button type="button" class="btn btn-default" ng-model="range" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showRangePlot = !showRangePlot">Range of Motion</button>
+			<button type="button" class="btn btn-default" ng-model="deviation" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showSpinePlot = !showSpinePlot">Spinal Deviation</button>
+			
+			<button type="button" class="btn" ng-model="describe" uib-btn-radio="''" uncheckable ng-click="showDescribePlots = !showDescribePlots">Describe Objective Data</button>
+			<button type="button" class="btn btn-default" ng-model="handtohand" uib-btn-radio="''" uncheckable ng-show="showDescribePlots == true" ng-click="showHandDistance = !showHandDistance">Hand to Hand and Audio</button>
+			
+			<button type="button" class="btn" ng-model="radioModel" uib-btn-radio="''" uncheckable ng-click="showDetails = !showDetails">Session Details</button>
+		</div>
+
+	</div>
+</div>
+
+<hr><footer><p>2017 Kinect Speech Capstone Group</p></footer>
