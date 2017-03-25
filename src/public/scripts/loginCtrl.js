@@ -8,7 +8,15 @@
                     $location.url('/physician');
                 }, function(error) {
                     $scope.dataLoading = false;
-                    $scope.error = error.data.message;
+                    let errMsg = [];
+                    if (error.status && error.status === 401) {
+                        errMsg = ['Invalid username or password.'];
+                    } else if (error.data && error.data.message) {
+                        errMsg = error.data.message;
+                    } else {
+                        errMsg = error.data;
+                    }
+                    $scope.error = errMsg;
                 });
         };
     }
