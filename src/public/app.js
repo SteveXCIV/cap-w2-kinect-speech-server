@@ -15,6 +15,23 @@
                 });
     }];
 
+    let deferredLogout = [
+        '$http',
+        '$location',
+        '$rootScope',
+        function ($http, $location, $rootScope) {
+            $rootScope.loggedInUser = null;
+            return $http.post('/api/v1/logout')
+                .then(response => {
+                    $location.url('/');
+                    return;
+                }, err => {
+                    console.log('Error logging out, redirecting.', err);
+                    $location.url('/');
+                    return;
+                });
+        }];
+
     angular.module('ngCapstone', ['ui.bootstrap', 'ui.router', 'chart.js', 'ngCookies']).config([
         '$urlRouterProvider',
         '$stateProvider',
@@ -57,7 +74,8 @@
                 resolve: checkLogin
             }).state('logout', {
                 url: '/logout',
-                templateUrl: 'logout.html'
+                templateUrl: 'logout.html',
+                resolve: deferredLogout
             })
         }
     ]);

@@ -168,6 +168,12 @@ export default class {
                 res.status(HttpError.NOT_FOUND).json("0");
             }
         });
+
+        this._app.post('/api/v1/logout', (req, res) => {
+            req.logout();
+            res.status(HttpError.OK)
+                .send('');
+        });
     }
 
     _checkPatient(req, res, next) {
