@@ -1,4 +1,20 @@
 (function() {
+    let checkLogin = [
+        '$http',
+        '$location',
+        '$rootScope',
+        function ($http, $location, $rootScope) {
+            return $http.get('/api/v1/loggedIn/physician')
+                .then(response => {
+                    let account = response.data;
+                    $rootScope.loggedInUser = account;
+                    return account;
+                },
+                err => {
+                    $location.url('/');
+                });
+    }];
+
     angular.module('ngCapstone', ['ui.bootstrap', 'ui.router', 'chart.js', 'ngCookies']).config([
         '$urlRouterProvider',
         '$stateProvider',
@@ -22,20 +38,23 @@
                 url: '/physician',
                 templateUrl: 'physician.html',
                 controller: 'physicianCtrl',
+                resolve: checkLogin,
                 data: {
-                    requireLogin: true
+                    requireLogin: true,
                 }
             }).state('player', {
                 url: '/player',
                 templateUrl: 'player.html',
                 controller: 'playerCtrl',
+                resolve: checkLogin,
                 data: {
                     requireLogin: true
                 }
             }).state('session', {
                 url: '/session',
                 templateUrl: 'session.html',
-                controller: 'sessionCtrl'
+                controller: 'sessionCtrl',
+                resolve: checkLogin
             }).state('logout', {
                 url: '/logout',
                 templateUrl: 'logout.html'

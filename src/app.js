@@ -163,7 +163,7 @@ export default class {
 
         this._app.get('/api/v1/loggedIn/physician', (req, res) => {
             if (!!(req.user) && _accountService.isPhysician(req.user)) {
-                res.status(HttpError.OK).json(req.user._id);
+                res.status(HttpError.OK).json(req.user);
             } else {
                 res.status(HttpError.NOT_FOUND).json("0");
             }
