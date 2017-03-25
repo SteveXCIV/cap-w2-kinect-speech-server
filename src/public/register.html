@@ -1,44 +1,77 @@
-<h3>Register</h3>
+<div class="row">
+    <div class="col-sm-offset-1 col-sm-10">
+        <h3>Register</h3>
+        <hr />
+    </div>
+</div>
 
-<form name="form" ng-submit="register()" role="form">
+<form class="form-horizontal" name="form" ng-submit="register()" role="form">
     <div class="form-group">
-        <label for="firstName">First name</label>
-        <i class="fa fa-lock"></i>
-        <input type="text" name="firstName" ng-model="firstName" required class="form-control">
-        <span ng-show="form.firstName.$dirty && form.firstName.$error.required" class="help-block">First name is required</span>
-    </div>
-    <div class="form-group">
-        <label for="lastName">Last name</label>
-        <i class="fa fa-lock"></i>
-        <input type="text" name="lastName" ng-model="lastName" required class="form-control">
-        <span ng-show="form.lastName.$dirty && form.lastName.$error.required" class="help-block">Last name is required</span>
+        <label class="col-sm-4 control-label" for="firstName">
+            <i class="fa fa-user-circle-o"></i>
+            First name
+        </label>
+        <div class="col-sm-4">
+            <input type="text" name="firstName" ng-model="firstName" required class="form-control">
+            <span ng-show="form.firstName.$dirty && form.firstName.$error.required" class="help-block">First name is required</span>
+        </div>
     </div>
     <div class="form-group">
-        <label for="email">Email</label>
-        <i class="fa fa-key"></i>
-        <input type="text" name="email" ng-model="email" required class="form-control">
-        <span ng-show="form.email.$dirty && form.email.$error.required" class="help-block">Email is required</span>
+        <label class="col-sm-4 control-label" for="lastName">
+            <i class="fa fa-user-circle-o"></i>
+            Last name
+        </label>
+        <div class="col-sm-4">
+            <input type="text" name="lastName" ng-model="lastName" required class="form-control">
+            <span ng-show="form.lastName.$dirty && form.lastName.$error.required" class="help-block">Last name is required</span>
+        </div>
     </div>
     <div class="form-group">
-        <label for="password">Password</label>
-        <i class="fa fa-lock"></i>
-        <input type="password" name="password" ng-model="password" required class="form-control">
-        <span ng-show="form.password.$dirty && form.password.$error.required" class="help-block">Password is required</span>
+        <label class="col-sm-4 control-label" for="email">
+            <i class="fa fa-envelope-o"></i>
+            Email
+        </label>
+        <div class="col-sm-4">
+            <input type="text" name="email" ng-model="email" required class="form-control">
+            <span ng-show="form.email.$dirty && form.email.$error.required" class="help-block">Email is required</span>
+        </div>
     </div>
     <div class="form-group">
-        <label for="verifyPassword">Confirm Password</label>
-        <i class="fa fa-lock"></i>
-        <input type="password" name="verifyPassword" ng-model="verifyPassword" required class="form-control">
-        <span ng-show="form.verifyPassword.$dirty && form.verifyPassword.$error.required" class="help-block">Confirmation is required</span>
+        <label class="col-sm-4 control-label" for="password">
+            <i class="fa fa-key"></i>
+            Password
+        </label>
+        <div class="col-sm-4">
+            <input type="password" name="password" ng-model="password" required class="form-control">
+            <span ng-show="form.password.$dirty && form.password.$error.required" class="help-block">Password is required</span>
+        </div>
     </div>
-    <div ng-if="error" class="form-group alert alert-danger">
-        <span class="h4">Errors:</span>
-        <ui ng-repeat="e in error">
-            <li>{{e}}</li>
-        </ui>
+    <div class="form-group">
+        <label class="col-sm-4 control-label" for="verifyPassword">
+            <i class="fa fa-key"></i>
+            Confirm Password
+        </label>
+        <div class="col-sm-4">
+            <input type="password" name="verifyPassword" ng-model="verifyPassword" required class="form-control">
+            <span ng-show="form.verifyPassword.$dirty && form.verifyPassword.$error.required" class="help-block">Confirmation is required</span>
+        </div>
     </div>
-    <div class="form-actions">
-        <button type="submit" ng-disabled="form.$invalid || dataLoading" class="btn btn-success">Register</button>
-        <span class="fa fa-spinner fa-spin" ng-if="dataLoading"></span>
+    <div ng-if="error" class="form-group">
+        <div class="col-sm-offset-4 col-sm-4">
+            <div class="alert alert-danger">
+                <span class="h4">Errors:</span>
+                <ui ng-repeat="e in error">
+                    <li>{{e}}</li>
+                </ui>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-4">
+            <div class="pull-right">
+                <button type="submit" ng-disabled="form.$invalid || dataLoading" class="btn btn-success">Register</button>
+                <span class="fa fa-spinner fa-spin" ng-if="dataLoading"></span>
+            </div>
+        </div>
     </div>
 </form>
