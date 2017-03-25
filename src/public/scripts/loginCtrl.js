@@ -2,16 +2,14 @@
     function loginController($scope, $rootScope, $location, accountService) {
         $scope.login = function() {
             $scope.dataLoading = true;
-            console.log("trying to log in");
-            accountService.login($scope.email, $scope.password, function(response) {
-                console.log(response);
-                if (response.data) {
-                    $location.path('/physician');
-                } else {
-                    $scope.error = response.message;
+            accountService.login($scope.email, $scope.password)
+                .then(function(response) {
                     $scope.dataLoading = false;
-                }
-            });
+                    $location.url('/physician');
+                }, function(error) {
+                    $scope.dataLoading = false;
+                    $scope.error = error.data.message;
+                });
         };
     }
 

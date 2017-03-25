@@ -1,12 +1,11 @@
 (function() {
     function accountService($http, $rootScope) {
-        function login(email, password, cb) {
-            $http.post('/api/v1/login/physician', {
+        function login(email, password) {
+            let req = {
                 email: email,
                 password: password
-            }).then(cb, err => {
-                console.log('Login error:', err);
-            });
+            };
+            return $http.post('/api/v1/login/physician', req);
         }
 
         function register(email, password, verifyPassword, firstName, lastName) {
