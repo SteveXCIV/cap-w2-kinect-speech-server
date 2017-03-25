@@ -47,6 +47,7 @@
                             };
                         };
                         $scope.precision = [$scope.precision];
+                        $scope.precisionlabels = timeLabeler($scope.precisionlabels);
                         $scope.precisionseries = ['Hand to Object Distance'];
 
                         //console.log($scope.objectives[0].Distances);
@@ -105,6 +106,7 @@
                         };
                         $scope.averageintensity = Average($scope.intensity);
                         $scope.handtohandaudio = [$scope.range].concat([$scope.intensity]);
+                        $scope.handtohandaudiolabels = timeLabeler($scope.handtohandaudiolabels);
                         $scope.handtohandaudioseries = ['Hand to Hand Distance', 'Audio Intensity'];
                         //completion time and average audio intensity
 
@@ -268,6 +270,13 @@
             var average = (sum / array.length);
             return average;
         }
+
+		function timeLabeler(timearray) {
+			for(var i = 0; i < timearray.length-1; i++){
+				if (timearray[i] == timearray[i+1]) {timearray[i] = ''};
+			}
+			return timearray;
+		}
 
         $scope.onClick = function(points, evt) {
             console.log(points, evt);
