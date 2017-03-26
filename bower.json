@@ -1,0 +1,13 @@
+{
+  "name": "cap-w2-kinect-speech-server",
+  "description": "",
+  "main": "build/main.js",
+  "authors": [
+    "Steve Troetti <SteveXCIV@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/SteveXCIV/cap-w2-kinect-speech-server",
+  "dependencies": {
+    "angular-avatar": "^1.3.0"
+  }
+}
