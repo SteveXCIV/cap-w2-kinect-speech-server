@@ -20,7 +20,7 @@ gulp.task('build', (done) => {
     let ngAngular = gulp.src(sourceDir + '/../bower_components/angular-avatar/dist/angular-avatar.min.js')
         .pipe(gulp.dest(buildDir + '/public/scripts'));
 
-    return merge(es6, deps)
+    return merge(es6, deps, ngAngular)
         .on('error', (err) => done(err));
 });
 
