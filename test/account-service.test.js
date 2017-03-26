@@ -1,10 +1,12 @@
 import * as mocha from 'mocha';
 import * as chai from 'chai';
+import like from 'chai-like';
 import HttpError from 'standard-http-error';
 import sinon from 'sinon';
 import AccountService from '../src/services/account-service';
 
 const expect = chai.expect;
+chai.use(like);
 
 describe('account-service patient tests', function() {
     it('should return code 200 for the patient it registers', function() {
@@ -107,7 +109,7 @@ describe('account-service physician tests', function() {
             .then(val => {
                 expect(val.code).to.equal(HttpError.OK);
                 expect(val.data).to.exist;
-                expect(val.data).to.deep.equal(physician);
+                expect(physician).to.be.like(val.data);
                 f.verify();
             });
     });

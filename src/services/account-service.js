@@ -13,6 +13,11 @@ export default class {
         this._accountModel = accountModel;
     }
 
+    _generalize(account) {
+        if (!account) return account;
+        return utils.stripClone(account, ['password', 'kind']);
+    }
+
     isPhysician(account) {
         return this._accountModel.isPhysician(account);
     }
@@ -51,6 +56,7 @@ export default class {
     getPatientById(patientId) {
         return this._patientModel
             .findById(patientId)
+            .then(this._generalize)
             .then(createNotFoundOrElse, createErrorWrapperMessage);
     }
 
@@ -64,12 +70,14 @@ export default class {
 
         return this._physicianModel
             .register(physician)
+            .then(this._generalize)
             .then(createOkMessage, createErrorWrapperMessage);
     }
 
     getPhysicianProfileById(physicianId) {
         return this._physicianModel
             .findProfileById(physicianId)
+            .then(this._generalize)
             .then(createNotFoundOrElse, createErrorWrapperMessage);
     }
 }
