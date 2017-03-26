@@ -60,3 +60,7 @@ tr {
     border-radius: 50%;
     position: absolute;
 }
+
+.nav > li > a.wide {
+    padding: 10px;
+}

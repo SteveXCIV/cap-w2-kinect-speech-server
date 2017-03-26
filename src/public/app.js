@@ -32,7 +32,7 @@
                 });
         }];
 
-    angular.module('ngCapstone', ['ui.bootstrap', 'ui.router', 'chart.js', 'ngCookies']).config([
+    angular.module('ngCapstone', ['ui.bootstrap', 'ui.router', 'chart.js', 'ngCookies', 'ngAvatar']).config([
         '$urlRouterProvider',
         '$stateProvider',
         function($urlRouterProvider, $stateProvider) {

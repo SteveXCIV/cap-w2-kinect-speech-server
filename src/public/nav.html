@@ -15,8 +15,8 @@
                 <li ui-sref-active="active"><a ui-sref="player">Player Page</a></li>
                 <li ui-sref-active="active"><a ui-sref="session">Session Details</a></li>
                 <li uib-dropdown class="dropdown">
-                    <a id="user-dropdown-toggle" uib-dropdown-toggle class="dropdown-toggle" data-toggle="dropdown">
-                        Account
+                    <a class="wide" id="user-dropdown-toggle" uib-dropdown-toggle class="dropdown-toggle" data-toggle="dropdown">
+                        <ng-avatar string="{{getUserName()}}" round-shape="true" auto-color="true" width="25"></ng-avatar>
                         <!-- <b class="caret"></b> -->
                     </a>
                     <ul uib-dropdown-menu aria-labelledby="user-dropdown-menu" class="dropdown-menu">
