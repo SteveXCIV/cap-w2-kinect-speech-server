@@ -103,12 +103,12 @@ export default class {
     _checkPhysician(req, res, next) {
         if (!(req.user)) {
             console.log('Check physician failed: no user logged in.');
-            res.redirect(HttpError.UNAUTHORIZED, '/login');
+            res.redirect(HttpError.UNAUTHORIZED, '/!#/login');
             return;
         }
         if (!_accountService.isPhysician(req.user)) {
             console.log('Check physician failed: user is not physician.');
-            res.redirect(HttpError.UNAUTHORIZED, '/login');
+            res.redirect(HttpError.UNAUTHORIZED, '/!#/login');
             return;
         }
         next();
