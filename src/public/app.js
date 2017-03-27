@@ -51,6 +51,11 @@
                 data: {
                     requireLogin: false
                 }
+            }).state('registerPatient', {
+                url: '/patient/new',
+                templateUrl: 'registerPatient.html',
+                controller: 'registerPatientCtrl',
+                resolve: checkLogin
             }).state('physician', {
                 url: '/physician',
                 templateUrl: 'physician.html',

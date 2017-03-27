@@ -72,7 +72,6 @@ const PatientSchema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: SESSION_NAME,
         }],
-        required: [ true, errors.VALIDATION_ERROR_MISSING_REQUIRED ],
         default: []
     }
 }, options);
