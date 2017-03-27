@@ -1,8 +1,7 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import logger from 'morgan';
-import cookieParser from 'cookie-parser';
-import session from 'express-session';
+import session from 'cookie-session';
 import passport from 'passport';
 import HttpError from 'standard-http-error';
 import { Strategy as LocalStrategy } from 'passport-local';
@@ -54,10 +53,11 @@ export default class {
         this._app.use(bodyParser.json({ limit: JSON_SIZE_LIMIT }));
         this._app.use(bodyParser.urlencoded({ extended: false, limit: JSON_SIZE_LIMIT }));
 
-        // set up middleware for cookies
-        this._app.use(cookieParser());
         // set up session handling
         this._app.use(session({ secret: this._secret }));
+
+        this._app.use(passport.initialize());
+        this._app.use(passport.session());
 
         // set up passportjs
         passport.use(new LocalStrategy({
@@ -69,8 +69,6 @@ export default class {
         }, this._localStrategy));
         passport.serializeUser(this._serializeUser);
         passport.deserializeUser(this._deserializeUser);
-        this._app.use(passport.initialize());
-        this._app.use(passport.session());
     }
 
     _serializeUser(user, done) {
@@ -80,8 +78,11 @@ export default class {
     _deserializeUser(id, done) {
         _accountService.getPhysicianProfileById(id)
             .then(val => {
-                if (val.code == HttpError.OK) done(null, val.data);
-                else done(val, false);
+                if (val.code == HttpError.OK) {
+                    done(null, val.data._doc);
+                } else {
+                    done(val, false);
+                }
             });
     }
 
@@ -89,8 +90,12 @@ export default class {
         _accountService.getAccountByEmail(email)
             .exec((err, user) => {
                 if (err) return done(err);
-                if (!user) return done(null, false, { message: 'Invalid credentials.' });
-                if (!user.authenticate(password)) return done(null, false, { message: 'Invalid credentials.' });
+                if (!user) {
+                    return done(null, false, { message: 'Invalid credentials.' });
+                }
+                if (!user.authenticate(password)) {
+                    return done(null, false, { message: 'Invalid credentials.' });
+                }
                 return done(null, user);
             });
     }

@@ -3,7 +3,7 @@
         $scope.getUserName = function() {
             let user = accountService.getUser();
             if (!user || !user.firstName || !user.lastName) {
-                return '';
+                return '?';
             }
             return user.firstName + ' ' + user.lastName;
         }
