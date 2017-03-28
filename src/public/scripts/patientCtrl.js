@@ -26,10 +26,6 @@
                     $scope.error = error.data.message;
                 });
         };
-
-        $scope.getPatients = function() {
-            return accountService.getUser().patients;
-        }
     }
 
     angular.module('ngCapstone').controller('patientCtrl', patientController);

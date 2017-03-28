@@ -1,5 +1,23 @@
-<h1>Dashboard Level</h1>
-<hr/>
-<a ui-sref="dashboard.physician">Show physician</a>
-<a ui-sref="dashboard.player">Show player</a>
-<div ui-view></div>
+<header ng-include="'nav.html'"></header>
+
+<div class="row">
+    <div class="col-sm-offset-1 col-sm-10">
+        <h3>Your Patients</h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-1 col-sm-10">
+        <ul class="list-group">
+            <li ng-repeat="patient in getPatients()" class="list-group-item">
+                <a href="/#!/patient/{{patient._id}}">{{patient.firstName}} {{patient.lastName}}</a>
+            </li>
+            <li class="list-group-item">
+                <a ui-sref="registerPatient">
+                    <i class="fa fa-plus"></i>
+                    Register new patient...
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

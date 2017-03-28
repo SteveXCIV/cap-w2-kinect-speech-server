@@ -56,19 +56,11 @@
                 templateUrl: 'registerPatient.html',
                 controller: 'patientCtrl',
                 resolve: checkLogin
-            }).state('patientsView', {
-                url: '/patient',
-                templateUrl: 'patientView.html',
-                controller: 'patientCtrl',
+            }).state('dashboard', {
+                url: '/home',
+                templateUrl: 'dashboard.html',
+                controller: 'dashboardCtrl',
                 resolve: checkLogin
-            }).state('physician', {
-                url: '/physician',
-                templateUrl: 'physician.html',
-                controller: 'physicianCtrl',
-                resolve: checkLogin,
-                data: {
-                    requireLogin: true,
-                }
             }).state('player', {
                 url: '/player',
                 templateUrl: 'player.html',
