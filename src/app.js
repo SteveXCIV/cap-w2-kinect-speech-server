@@ -210,13 +210,13 @@ export default class {
     }
 
     _setupSessionRoutes() {
-        this._app.get('/api/v1/sessions', (req, res) => {
-            this._sessionService.getAllSessions()
-                .then(out => {
-                    res.status(out.code)
-                        .json(out.data);
-                });
-        });
+        // this._app.get('/api/v1/sessions', (req, res) => {
+        //     this._sessionService.getAllSessions()
+        //         .then(out => {
+        //             res.status(out.code)
+        //                 .json(out.data);
+        //         });
+        // });
 
         // this._app.get(
         //     '/api/v1/sessions/:patientId',
