@@ -2,20 +2,24 @@
     angular.module('ngCapstone').controller('sessionCtrl', function($scope, sessionFactory, $stateParams) {
 
         $scope.sessionId = $stateParams.sessionId;
-        $scope.sessionindex = 0;
-        $scope.trialNumber = 1;
+        $scope.sessionindex = '';
         $scope.precisionPlot = [];
         $scope.handtohandaudioPlot = [];
         $scope.rangePlot = [];
+        $scope.trials = [];
+        $scope.trialLog = {};
 
         sessionFactory.getData($scope.sessionId).then(function(data) {
             //General Session Data
-            $scope.sessiondata = data.data[$scope.sessionindex];
+            //$scope.sessiondata = data.data[$scope.sessionindex];
+            $scope.sessiondata = data.data;
             $scope.start = new Date($scope.sessiondata.StartTime)
             $scope.end = new Date($scope.sessiondata.EndTime);
             $scope.duration = msConverter($scope.end - $scope.start);
             $scope.totalTrials  = $scope.sessiondata.Trials.length;
-
+            for (var i = 0; i < $scope.totalTrials; i++) {
+                $scope.trials.push({index: i});
+            }
             //Calibration Data
             $scope.calibration = $scope.sessiondata.CalibrationData;
             $scope.radius = $scope.sessiondata.CalibrationData.Radius;
@@ -25,15 +29,29 @@
             $scope.audiothreshold = $scope.sessiondata.CalibrationData.AudioThreshold;
 
             //Plot Generation per Trial
-            $scope.precisionPlot[$scope.trialNumber] = precisionPlotGenerator($scope.sessiondata.Trials[$scope.trialNumber]);
-            $scope.handtohandaudioPlot[$scope.trialNumber] = handtohandaudioPlotGenerator($scope.sessiondata.Trials[$scope.trialNumber]);
-            $scope.rangePlot[$scope.trialNumber] = rangePlotGenerator($scope.sessiondata.Trials[$scope.trialNumber]);
-
+            $scope.getAllSelected = function(){   
+                $scope.selectedTrials = [];
+                angular.forEach($scope.trialLog,function(key,value){
+                    if(key)
+                        $scope.selectedTrials.push(value)
+                });
+                console.log($scope.selectedTrials);
+                angular.forEach($scope.selectedTrials,function(trialNumber){
+                    console.log(trialNumber);
+                    $scope.precisionPlot[trialNumber] = precisionPlotGenerator($scope.sessiondata.Trials[trialNumber]);
+                    $scope.handtohandaudioPlot[trialNumber] = handtohandaudioPlotGenerator($scope.sessiondata.Trials[trialNumber]);
+                    $scope.rangePlot[trialNumber] = rangePlotGenerator($scope.sessiondata.Trials[trialNumber]);
+                });
+            };
+            
+            
         }, function(error) {
             console.log(error);
         });
 
         $scope.onClick = function(points, evt) {console.log(points, evt);};
+
+        
 
         function msConverter(ms) {
             var min = Math.floor(ms / 60000);
@@ -96,29 +114,29 @@
                                 angular.forEach(bodysnapshots[s].Joints[j], function(value, key) {
                                     if (key === "JointType" && value === "HandRight") {
                                         righthand.push([
-                                            {
-                                                x: bodysnapshots[s].Joints[j].X,
-                                                y: bodysnapshots[s].Joints[j].Y,
-                                                r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
-                                            }
+                                        {
+                                            x: bodysnapshots[s].Joints[j].X,
+                                            y: bodysnapshots[s].Joints[j].Y,
+                                            r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
+                                        }
                                         ]);
                                     };
                                     if (key === "JointType" && value === "HandLeft") {
                                         lefthand.push([
-                                            {
-                                                x: bodysnapshots[s].Joints[j].X,
-                                                y: bodysnapshots[s].Joints[j].Y,
-                                                r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
-                                            }
+                                        {
+                                            x: bodysnapshots[s].Joints[j].X,
+                                            y: bodysnapshots[s].Joints[j].Y,
+                                            r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
+                                        }
                                         ]);
                                     };
                                     if (key === "JointType" && value === "SpineMid") {
                                         spinemid.push([
-                                            {
-                                                x: bodysnapshots[s].Joints[j].X,
-                                                y: bodysnapshots[s].Joints[j].Y,
-                                                r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
-                                            }
+                                        {
+                                            x: bodysnapshots[s].Joints[j].X,
+                                            y: bodysnapshots[s].Joints[j].Y,
+                                            r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
+                                        }
                                         ]);
                                     };
                                 });
@@ -145,105 +163,105 @@
 
                     };
                 });
-            };
-            return {data: precision, labels: precisionlabels, series: precisionseries, options: precisionoptions, override: precisionoverride};
-        };
+};
+return {data: precision, labels: precisionlabels, series: precisionseries, options: precisionoptions, override: precisionoverride};
+};
 
-        function rangePlotGenerator (trialData) {
-            var righthand = [];
-            var lefthand = [];
-            var spinemid = [];
-            var objectives = trialData.Objectives;
-            for (var i = 0; i < objectives.length; i++) {
-                angular.forEach(objectives[i], function(value, key) {
-                    if (key === "kind" && value === "LocateObjective") {
-                        var bodysnapshots = objectives[i].BodySnapshots;
-                        for (var s = 0; s < bodysnapshots.length; s++) {
-                            for (var j = 0; j < 15; j++) {
-                                angular.forEach(bodysnapshots[s].Joints[j], function(value, key) {
-                                    if (key === "JointType" && value === "HandRight") {
-                                        righthand.push([
-                                            {
-                                                x: bodysnapshots[s].Joints[j].X,
-                                                y: bodysnapshots[s].Joints[j].Y,
-                                                r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
-                                            }
-                                        ]);
-                                    };
-                                    if (key === "JointType" && value === "HandLeft") {
-                                        lefthand.push([
-                                            {
-                                                x: bodysnapshots[s].Joints[j].X,
-                                                y: bodysnapshots[s].Joints[j].Y,
-                                                r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
-                                            }
-                                        ]);
-                                    };
-                                    if (key === "JointType" && value === "SpineMid") {
-                                        spinemid.push([
-                                            {
-                                                x: bodysnapshots[s].Joints[j].X,
-                                                y: bodysnapshots[s].Joints[j].Y,
-                                                r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
-                                            }
-                                        ]);
-                                    };
-                                });
+function rangePlotGenerator (trialData) {
+    var righthand = [];
+    var lefthand = [];
+    var spinemid = [];
+    var objectives = trialData.Objectives;
+    for (var i = 0; i < objectives.length; i++) {
+        angular.forEach(objectives[i], function(value, key) {
+            if (key === "kind" && value === "LocateObjective") {
+                var bodysnapshots = objectives[i].BodySnapshots;
+                for (var s = 0; s < bodysnapshots.length; s++) {
+                    for (var j = 0; j < 15; j++) {
+                        angular.forEach(bodysnapshots[s].Joints[j], function(value, key) {
+                            if (key === "JointType" && value === "HandRight") {
+                                righthand.push([
+                                {
+                                    x: bodysnapshots[s].Joints[j].X,
+                                    y: bodysnapshots[s].Joints[j].Y,
+                                    r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
+                                }
+                                ]);
                             };
-                        };
+                            if (key === "JointType" && value === "HandLeft") {
+                                lefthand.push([
+                                {
+                                    x: bodysnapshots[s].Joints[j].X,
+                                    y: bodysnapshots[s].Joints[j].Y,
+                                    r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
+                                }
+                                ]);
+                            };
+                            if (key === "JointType" && value === "SpineMid") {
+                                spinemid.push([
+                                {
+                                    x: bodysnapshots[s].Joints[j].X,
+                                    y: bodysnapshots[s].Joints[j].Y,
+                                    r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
+                                }
+                                ]);
+                            };
+                        });
                     };
-                });
+                };
             };
-            var rangeoptions = {
-                title: {
+        });
+    };
+    var rangeoptions = {
+        title: {
+            display: true,
+            text: 'Range of Motion'
+        },
+        scales: {
+            yAxes: [
+            {
+                scaleLabel: {
                     display: true,
-                    text: 'Range of Motion'
+                    labelString: 'Vertical Position'
                 },
-                scales: {
-                    yAxes: [
-                        {
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Vertical Position'
-                            },
-                            id: 'y-axis',
-                            type: 'linear',
-                            display: true,
-                            position: 'left'
-                        }
-                    ],
-                    xAxes: [
-                        {
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Lateral Position'
-                            },
-                            id: 'x-axis',
-                            type: 'linear',
-                            display: true,
-                            position: 'bottom'
-                        }
-                    ]
+                id: 'y-axis',
+                type: 'linear',
+                display: true,
+                position: 'left'
+            }
+            ],
+            xAxes: [
+            {
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Lateral Position'
+                },
+                id: 'x-axis',
+                type: 'linear',
+                display: true,
+                position: 'bottom'
+            }
+            ]
 
-                }
-            };
-            var rangeoverride = [
-                {
-                    backgroundColor: "#FF6384"
-                }, {
-                    hoverBackgroundColor: "#FF6384"
-                }
-            ];
-            return {right: righthand, left: lefthand, spinemid: spinemid, options: rangeoptions, override: rangeoverride};
-        };
+        }
+    };
+    var rangeoverride = [
+    {
+        backgroundColor: "#FF6384"
+    }, {
+        hoverBackgroundColor: "#FF6384"
+    }
+    ];
+    return {right: righthand, left: lefthand, spinemid: spinemid, options: rangeoptions, override: rangeoverride};
+};
 
-        function handtohandaudioPlotGenerator (trialData) {
-            var intensity = []; var range = [];
-            var handtohandaudio = []; var handtohandaudiolabels = [];
-            var objectives = trialData.Objectives;
-            for (var i = 0; i < objectives.length; i++) {
-                angular.forEach(objectives[i], function(value, key) {
-                    if (key === "kind" && value === "DescribeObjective") {
+function handtohandaudioPlotGenerator (trialData) {
+    var intensity = []; var range = [];
+    var handtohandaudio = []; var handtohandaudiolabels = [];
+    var objectives = trialData.Objectives;
+    for (var i = 0; i < objectives.length; i++) {
+        angular.forEach(objectives[i], function(value, key) {
+            if (key === "kind" && value === "DescribeObjective") {
                         //var describestart = new Date(objectives[i].StartTime);
                         //var describeend = new Date(objectives[i].EndTime);
                         //var describecompletiontime = msConverter(describeend - describestart);
@@ -260,48 +278,48 @@
                         handtohandaudiolabels = timeLabeler(handtohandaudiolabels);
                     };
                 });
-            };
-            var handtohandaudioseries = ['Hand to Hand Distance', 'Audio Intensity'];
-            var handtohandaudiooptions = {
-                title: {
+    };
+    var handtohandaudioseries = ['Hand to Hand Distance', 'Audio Intensity'];
+    var handtohandaudiooptions = {
+        title: {
+            display: true,
+            text: 'Hand to Hand Distance and Audio Intensity vs. Time'
+        },
+        scales: {
+            yAxes: [
+            {
+                scaleLabel: {
                     display: true,
-                    text: 'Hand to Hand Distance and Audio Intensity vs. Time'
+                    labelString: 'Hand to Hand Distance'
                 },
-                scales: {
-                    yAxes: [
-                        {
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Hand to Hand Distance'
-                            },
-                            id: 'y-axis-1',
-                            type: 'linear',
-                            display: true,
-                            position: 'left'
-                        }, {
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Average Audio Intensity'
-                            },
-                            id: 'y-axis-2',
-                            type: 'linear',
-                            display: true,
-                            position: 'right'
-                        }
-                    ],
-                    xAxes: [
-                        {
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Time (sec)'
-                            }
-                        }
-                    ]
+                id: 'y-axis-1',
+                type: 'linear',
+                display: true,
+                position: 'left'
+            }, {
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Average Audio Intensity'
+                },
+                id: 'y-axis-2',
+                type: 'linear',
+                display: true,
+                position: 'right'
+            }
+            ],
+            xAxes: [
+            {
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Time (sec)'
                 }
-            };
-            var handtohandaudiooverride = [
-                {
-                    yAxisID: 'y-axis-1',
+            }
+            ]
+        }
+    };
+    var handtohandaudiooverride = [
+    {
+        yAxisID: 'y-axis-1',
                     borderColor: "rgb(4, 141, 183)", //blue
                     pointBackgroundColor: "rgb(4, 141, 183)", //blue
 
@@ -324,38 +342,38 @@
                     pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
                     pointHoverBackgroundColor: "rgb(213, 223, 61)" //light green
                 }
-            ];
-            return {data: handtohandaudio, labels: handtohandaudiolabels, series: handtohandaudioseries, options: handtohandaudiooptions, override: handtohandaudiooverride};
-        };
-
-        function precisionPlotGenerator (trialData) {
-            var precision = []; var precisionlabels = [];
-            var objectives = trialData.Objectives;
-            for (var i = 0; i < objectives.length; i++) {
-                angular.forEach(objectives[i], function(value, key) {
-                    if (key === "kind" && value === "LocateObjective") {
-                        var activationtime = new Date(objectives[i].ActivationTime);
-                        var locateend = new Date(objectives[i].EndTime);
-                        for (var j = 0; j < objectives[i].Distances.length; j++) {
-                            var currenttime = new Date(objectives[i].Distances[j].Time);
-                            if (currenttime >= activationtime && currenttime <= locateend) {
-                                precisionlabels.push(msConverter(currenttime - new Date(activationtime)));
-                                precision.push(objectives[i].Distances[j].Distance);
-                            };
-                        };
-                        precision = [precision];
-                        precisionlabels = timeLabeler(precisionlabels);
-                    };
-                });
+                ];
+                return {data: handtohandaudio, labels: handtohandaudiolabels, series: handtohandaudioseries, options: handtohandaudiooptions, override: handtohandaudiooverride};
             };
-            var precisionseries = ['Hand to Object Distance'];
-            var precisionoptions = {
-                title: {
-                    display: true,
-                    text: 'Hand to Object Distance vs. Time'
-                },
-                scales: {
-                    yAxes: [
+
+            function precisionPlotGenerator (trialData) {
+                var precision = []; var precisionlabels = [];
+                var objectives = trialData.Objectives;
+                for (var i = 0; i < objectives.length; i++) {
+                    angular.forEach(objectives[i], function(value, key) {
+                        if (key === "kind" && value === "LocateObjective") {
+                            var activationtime = new Date(objectives[i].ActivationTime);
+                            var locateend = new Date(objectives[i].EndTime);
+                            for (var j = 0; j < objectives[i].Distances.length; j++) {
+                                var currenttime = new Date(objectives[i].Distances[j].Time);
+                                if (currenttime >= activationtime && currenttime <= locateend) {
+                                    precisionlabels.push(msConverter(currenttime - new Date(activationtime)));
+                                    precision.push(objectives[i].Distances[j].Distance);
+                                };
+                            };
+                            precision = [precision];
+                            precisionlabels = timeLabeler(precisionlabels);
+                        };
+                    });
+                };
+                var precisionseries = ['Hand to Object Distance'];
+                var precisionoptions = {
+                    title: {
+                        display: true,
+                        text: 'Hand to Object Distance vs. Time'
+                    },
+                    scales: {
+                        yAxes: [
                         {
                             scaleLabel: {
                                 display: true,
@@ -366,18 +384,18 @@
                             display: true,
                             position: 'left'
                         }
-                    ],
-                    xAxes: [
+                        ],
+                        xAxes: [
                         {
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Time (sec)'
                             }
                         }
-                    ]
-                }
-            };
-            var precisionoverride = [
+                        ]
+                    }
+                };
+                var precisionoverride = [
                 {
                     yAxisID: 'yaxis',
                     borderColor: "rgb(4, 141, 183)", //blue
@@ -387,9 +405,9 @@
                     pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
                     pointHoverBackgroundColor: "rgb(4, 141, 183)" //blue
                 }
-            ];
-            return {data: precision, labels: precisionlabels, series: precisionseries, options: precisionoptions, override: precisionoverride};
-        };
+                ];
+                return {data: precision, labels: precisionlabels, series: precisionseries, options: precisionoptions, override: precisionoverride};
+            };
 
-    });
+        });
 })();

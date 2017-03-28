@@ -4,6 +4,7 @@
 -->
 <header ng-include="'nav.html'"></header>
 
+<hr>
 <div class="container-fluid">
 	<div class="col-md-9 col-md-push-3">
 
@@ -16,13 +17,13 @@
 			</div>
 		</div>
 
-		<div ng-show="showPrecisionPlot == true">
+		<div ng-show="showPrecisionPlot == true" ng-repeat="trialNumber in selectedTrials">
 			<div class="well">
 				<canvas id="line" class="chart-line" chart-data="precisionPlot[trialNumber].data" chart-labels="precisionPlot[trialNumber].labels" chart-series="precisionPlot[trialNumber].series" chart-options="precisionPlot[trialNumber].options" chart-dataset-override="precisionPlot[trialNumber].override" chart-click="onClick"></canvas>
 			</div>
 		</div>
 
-		<div ng-show="showRangePlot == true">
+		<div ng-show="showRangePlot == true" ng-repeat="trialNumber in selectedTrials">
 			<div class="well">
 				<h5 align="center"> {{ "Left Hand" }} </h5>
 				<canvas id="base" class="chart-bubble" chart-data="rangePlot[trialNumber].left" chart-options="rangePlot[trialNumber].options" chart-dataset-override="rangePlot[trialNumber].override" chart-colors="colors"></canvas>
@@ -33,14 +34,14 @@
 			</div>
 		</div>
 
-		<div ng-show="showSpinePlot == true">
+		<div ng-show="showSpinePlot == true" ng-repeat="trialNumber in selectedTrials">
 			<div class="well">
 				<h5 align="center"> {{ "Spine Mid" }} </h5>
 				<canvas id="base" class="chart-bubble" chart-data="rangePlot[trialNumber].spinemid" chart-options="rangePlot[trialNumber].options" chart-colors="colors"></canvas>
 			</div>
 		</div>
 
-		<div ng-show="showHandDistancePlot == true">
+		<div ng-show="showHandDistancePlot == true" ng-repeat="trialNumber in selectedTrials">
 			<div class="well">
 				<canvas id="line" class="chart-line" chart-data="handtohandaudioPlot[trialNumber].data" chart-labels="handtohandaudioPlot[trialNumber].labels" chart-series="handtohandaudioPlot[trialNumber].series" chart-options="handtohandaudioPlot[trialNumber].options" chart-dataset-override="handtohandaudioPlot[trialNumber].override" chart-click="onClick"></canvas>
 			</div>
@@ -58,26 +59,18 @@
 
 	<div class="col-md-3 col-md-pull-9 well">
 		<h1> {{ "Session " + sessionindex + " Breakdown" }} </h1>
-		<p><strong>Session ID: </strong>{{ sessionID }}</p>
+		<p><strong>Session ID: </strong>{{ sessionId }}</p>
 		<p><strong>Date: </strong>{{ start | date }}</p>
 		<p><strong>Time: </strong>{{ start | date: 'shortTime' }}{{ " - " }}{{ end | date: 'shortTime' }}</p>
 		<p><strong>Duration: </strong>{{ duration + ' sec'}}</p>
 
 		<div class="container">
 			<form>
-				<div class="checkbox">
+				<div ng-repeat="trial in trials" class="checkbox">
 					<label class="checkbox-inline">
-						<input type="checkbox" value="">Trial 1
-					</label>
-				</div>
-				<div class="checkbox">
-					<label class="checkbox-inline">
-						<input type="checkbox" value="">Trial 2
-					</label>
-				</div>
-				<div class="checkbox">
-					<label class="checkbox-inline">
-						<input type="checkbox" value="">Trial 3
+						<input type="checkbox" 
+						ng-model="trialLog[trial.index]" 
+						value={{trial.index}}/>Trial {{trial.index}}
 					</label>
 				</div>
 			</form>
@@ -88,14 +81,19 @@
 
 			<button type="button" class="btn" ng-model="locate" uib-btn-radio="''" uncheckable ng-click="showLocatePlots = !showLocatePlots">Locate Objective Data</button>
 			
-			<button type="button" class="btn btn-default" ng-model="precisionmodel" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showPrecisionPlot = !showPrecisionPlot">Precision</button>
-			<button type="button" class="btn btn-default" ng-model="range" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showRangePlot = !showRangePlot">Range of Motion</button>
-			<button type="button" class="btn btn-default" ng-model="deviation" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showSpinePlot = !showSpinePlot">Spinal Deviation</button>
+			<button type="button" class="btn btn-default" ng-model="precisionmodel" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showPrecisionPlot = !showPrecisionPlot; getAllSelected()">Precision</button>
+			<button type="button" class="btn btn-default" ng-model="range" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showRangePlot = !showRangePlot; getAllSelected()">Range of Motion</button>
+			<button type="button" class="btn btn-default" ng-model="deviation" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showSpinePlot = !showSpinePlot; getAllSelected()">Spinal Deviation</button>
 
 			<button type="button" class="btn" ng-model="describe" uib-btn-radio="''" uncheckable ng-click="showDescribePlots = !showDescribePlots">Describe Objective Data</button>
-			<button type="button" class="btn btn-default" ng-model="handtohand" uib-btn-radio="''" uncheckable ng-show="showDescribePlots == true" ng-click="showHandDistancePlot = !showHandDistancePlot">Hand to Hand and Audio</button>
+			<button type="button" class="btn btn-default" ng-model="handtohand" uib-btn-radio="''" uncheckable ng-show="showDescribePlots == true" ng-click="showHandDistancePlot = !showHandDistancePlot; getAllSelected()">Hand to Hand and Audio</button>
 
 			<button type="button" class="btn" ng-model="radioModel" uib-btn-radio="''" uncheckable ng-click="showDetails = !showDetails">Session Details</button>
+		</div>
+
+		<hr>
+		<div class="btn-group-vertical">
+			<button type="button" class="btn btn-default" ng-model="clear" ng-click="showPrecisionPlot = showRangePlot = showSpinePlot = showHandDistancePlot = false" >Clear Plots</button>
 		</div>
 
 	</div>
