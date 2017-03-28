@@ -46,9 +46,6 @@ export default class {
         this._app.use(logger('dev'));
 
         // Set up the middleware for JSON request/responses
-        this._app.use(bodyParser.json());
-        this._app.use(bodyParser.urlencoded({ extended: false }));
-
         this._app.use(express.static(__dirname + '/public'));
         this._app.use(bodyParser.json({ limit: JSON_SIZE_LIMIT }));
         this._app.use(bodyParser.urlencoded({ extended: false, limit: JSON_SIZE_LIMIT }));
@@ -72,28 +69,41 @@ export default class {
     }
 
     _serializeUser(user, done) {
+        console.log('serialize', user._id, user.firstName, user.lastName);
         done(null, user._id);
     }
 
     _deserializeUser(id, done) {
-        _accountService.getPhysicianProfileById(id)
+        console.log('attempt to deserialize', id);
+        _accountService.getAccountById(id)
             .then(val => {
                 if (val.code == HttpError.OK) {
-                    done(null, val.data._doc);
+                    console.log('deserialized', val.data._doc._id,);
+                    done(null, _accountService.generalize(val.data._doc));
                 } else {
+                    console.log('deserialize error', val);
                     done(val, false);
                 }
             });
     }
 
     _localStrategy(email, password, done) {
+        console.log('attempt find using email', email);
         _accountService.getAccountByEmail(email)
             .exec((err, user) => {
+                console.log('err', err);
+                console.log(
+                    'user',
+                    user._id,
+                    user.firstName,
+                    user.lastName);
                 if (err) return done(err);
                 if (!user) {
+                    console.log('invalid credentials - user was null');
                     return done(null, false, { message: 'Invalid credentials.' });
                 }
                 if (!user.authenticate(password)) {
+                    console.log('invalid credentials - user authentication failed');
                     return done(null, false, { message: 'Invalid credentials.' });
                 }
                 return done(null, user);
@@ -114,6 +124,18 @@ export default class {
         if (!_accountService.isPhysician(req.user)) {
             console.log('Check physician failed: user is not physician.');
             res.redirect(HttpError.UNAUTHORIZED, '/!#/login');
+            return;
+        }
+        next();
+    }
+
+    _checkPatient(req, res, next) {
+        if (!(req.user)) {
+            res.redirect(HttpError.UNAUTHORIZED, '/login');
+            return;
+        }
+        if (!_accountService.isPatient(req.user)) {
+            res.redirect(HttpError.UNAUTHORIZED, '/login');
             return;
         }
         next();
@@ -167,7 +189,11 @@ export default class {
         });
 
         this._app.get('/api/v1/loggedIn/physician', (req, res) => {
-            if (!!(req.user) && _accountService.isPhysician(req.user)) {
+            let userExists = !!(req.user);
+            let isPhy = _accountService.isPhysician(req.user);
+            console.log('user exists? ', userExists, ', user is physician? ', isPhy);
+            if (userExists && isPhy) {
+                console.log('sending back user profile', req.user);
                 res.status(HttpError.OK).json(req.user);
             } else {
                 res.status(HttpError.NOT_FOUND).json("0");
@@ -197,18 +223,6 @@ export default class {
             });
     }
 
-    _checkPatient(req, res, next) {
-        if (!(req.user)) {
-            res.redirect(HttpError.UNAUTHORIZED, '/login');
-            return;
-        }
-        if (!_accountService.isPatient(req.user)) {
-            res.redirect(HttpError.UNAUTHORIZED, '/login');
-            return;
-        }
-        next();
-    }
-
     _setupSessionRoutes() {
         // this._app.get('/api/v1/sessions', (req, res) => {
         //     this._sessionService.getAllSessions()
@@ -234,15 +248,6 @@ export default class {
         //             })
         // });
 
-        this._app.get('/api/v1/sessions/:id', (req, res) => {
-            let sessionId = req.params.id;
-            this._sessionService.getSessionById(sessionId)
-                .then(out => {
-                    res.status(out.code)
-                        .json(out.data);
-                });
-        });
-
         this._app.post(
             '/api/v1/sessions',
             passport.authenticate('no-session'),
@@ -255,9 +260,26 @@ export default class {
                 session.Patient = userId;
                 this._sessionService.createSession(session)
                     .then(out => {
+                        if (out.code === HttpError.OK) {
+                            console.log('linking session to patient', userId, out.data._id);
+                            return this._accountService
+                                .linkSessionToPatient(userId, out.data._id)
+                                .then(_ => out);
+                        }
+                    })
+                    .then(out => {
                         res.status(out.code)
                             .json(out.data);
-                    })
+                    });
+        });
+
+        this._app.get('/api/v1/sessions/:id', (req, res) => {
+            let sessionId = req.params.id;
+            this._sessionService.getSessionById(sessionId)
+                .then(out => {
+                    res.status(out.code)
+                        .json(out.data);
+                });
         });
 
         // this._app.post('/api/v1/sessions/reserve',

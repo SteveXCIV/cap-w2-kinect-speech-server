@@ -13,9 +13,9 @@ export default class {
         this._accountModel = accountModel;
     }
 
-    _generalize(account) {
+    generalize(account) {
         if (!account) return account;
-        return utils.stripClone(account, ['password', 'kind']);
+        return utils.stripClone(account, ['password']);
     }
 
     isPhysician(account) {
@@ -28,6 +28,21 @@ export default class {
 
     getAccountByEmail(email) {
         return this._accountModel.findOne({ email: email });
+    }
+
+    getAccountById(id) {
+        return this._accountModel
+            .findById(id)
+            .then(doc => {
+                // console.log('got account for id', id, doc);
+                if (this._accountModel.isPhysician(doc)) {
+                    return doc
+                        .populate({ path: 'patients', select: '_id firstName lastName' })
+                        .execPopulate();
+                }
+                return doc;
+            })
+            .then(createNotFoundOrElse, createErrorWrapperMessage);
     }
 
     registerPatient(patient, physicianId) {

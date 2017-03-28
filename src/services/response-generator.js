@@ -1,14 +1,13 @@
 import HttpError from 'standard-http-error';
 
-class HttpErrorMessage extends HttpError {
+class HttpErrorMessage {
     constructor(code, message) {
-        super(code);
-        let msg = message || this.message;
+        let internal = new HttpError(code);
+        let msg = message || internal.message;
         if (!(msg instanceof Array)) {
             msg = [ msg ];
         }
         this.data = { message: msg };
-        // console.log(`Generated error message: HttpError Code ${code}; Message: ${msg}`);
     }
 }
 
@@ -39,6 +38,7 @@ export function createOkMessage(val) {
 
 export function createErrorWrapperMessage(error) {
     let code = HttpError.INTERNAL_SERVER_ERROR;
+    console.log('wrapping error', error);
     let e;
     if (e = makeHumanReadableValidationError(error)) {
         return new HttpErrorMessage(code, e);
