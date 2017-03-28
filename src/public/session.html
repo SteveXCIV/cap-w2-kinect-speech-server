@@ -47,6 +47,12 @@
 			</div>
 		</div>
 
+		<div ng-show="showHandSpinePlot == true" ng-repeat="trialNumber in selectedTrials">
+			<div class="well">
+				<canvas id="line" class="chart-line" chart-data="handtospineaudioPlot[trialNumber].data" chart-labels="handtospineaudioPlot[trialNumber].labels" chart-series="handtospineaudioPlot[trialNumber].series" chart-options="handtospineaudioPlot[trialNumber].options" chart-dataset-override="handtospineaudioPlot[trialNumber].override" chart-click="onClick"></canvas>
+			</div>
+		</div>
+
 		<div ng-show="showDetails == true">
 			<div class="well">
 				<h2>Details</h2>
@@ -86,14 +92,16 @@
 			<button type="button" class="btn btn-default" ng-model="deviation" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showSpinePlot = !showSpinePlot; getAllSelected()">Spinal Deviation</button>
 
 			<button type="button" class="btn" ng-model="describe" uib-btn-radio="''" uncheckable ng-click="showDescribePlots = !showDescribePlots">Describe Objective Data</button>
+
 			<button type="button" class="btn btn-default" ng-model="handtohand" uib-btn-radio="''" uncheckable ng-show="showDescribePlots == true" ng-click="showHandDistancePlot = !showHandDistancePlot; getAllSelected()">Hand to Hand and Audio</button>
+			<button type="button" class="btn btn-default" ng-model="handtospine" uib-btn-radio="''" uncheckable ng-show="showDescribePlots == true" ng-click="showHandSpinePlot = !showHandSpinePlot; getAllSelected()">Hand to Spine and Audio</button>
 
 			<button type="button" class="btn" ng-model="radioModel" uib-btn-radio="''" uncheckable ng-click="showDetails = !showDetails">Session Details</button>
 		</div>
 
 		<hr>
 		<div class="btn-group-vertical">
-			<button type="button" class="btn btn-default" ng-model="clear" ng-click="showPrecisionPlot = showRangePlot = showSpinePlot = showHandDistancePlot = false" >Clear Plots</button>
+			<button type="button" class="btn btn-default" ng-model="clear" ng-click="showPrecisionPlot = showRangePlot = showSpinePlot = showHandDistancePlot = showSpineDistancePlot = false" >Clear Plots</button>
 		</div>
 
 	</div>

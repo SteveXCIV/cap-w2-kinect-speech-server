@@ -5,6 +5,7 @@
         $scope.sessionindex = '';
         $scope.precisionPlot = [];
         $scope.handtohandaudioPlot = [];
+        $scope.handtospineaudioPlot = [];
         $scope.rangePlot = [];
         $scope.trials = [];
         $scope.trialLog = {};
@@ -35,11 +36,12 @@
                     if(key)
                         $scope.selectedTrials.push(value)
                 });
-                console.log($scope.selectedTrials);
                 angular.forEach($scope.selectedTrials,function(trialNumber){
                     console.log(trialNumber);
                     $scope.precisionPlot[trialNumber] = precisionPlotGenerator($scope.sessiondata.Trials[trialNumber]);
                     $scope.handtohandaudioPlot[trialNumber] = handtohandaudioPlotGenerator($scope.sessiondata.Trials[trialNumber]);
+                    $scope.handtospineaudioPlot[trialNumber] = handtospineaudioPlotGenerator($scope.sessiondata.Trials[trialNumber]);
+                    console.log($scope.handtospineaudioPlot[trialNumber]);
                     $scope.rangePlot[trialNumber] = rangePlotGenerator($scope.sessiondata.Trials[trialNumber]);
                 });
             };
@@ -50,7 +52,6 @@
         });
 
         $scope.onClick = function(points, evt) {console.log(points, evt);};
-
         
 
         function msConverter(ms) {
@@ -344,6 +345,97 @@ function handtohandaudioPlotGenerator (trialData) {
                 }
                 ];
                 return {data: handtohandaudio, labels: handtohandaudiolabels, series: handtohandaudioseries, options: handtohandaudiooptions, override: handtohandaudiooverride};
+            };
+
+            function handtospineaudioPlotGenerator (trialData) {
+                var intensity = []; var range = [];
+                var handtospineaudio = []; var handtospineaudiolabels = [];
+                var objectives = trialData.Objectives;
+                for (var i = 0; i < objectives.length; i++) {
+                    angular.forEach(objectives[i], function(value, key) {
+                        if (key === "kind" && value === "DescribeObjective") {
+                        //var describestart = new Date(objectives[i].StartTime);
+                        //var describeend = new Date(objectives[i].EndTime);
+                        //var describecompletiontime = msConverter(describeend - describestart);
+                        for (var j = 0; j < objectives[i].Distances.length; j++) {
+                            range.push(objectives[i].Distances[j].HandsToSpineDistance);
+                            var currenttime = new Date(objectives[i].Distances[j].Time);
+                            handtospineaudiolabels.push(msConverter(currenttime - new Date(objectives[i].Distances[0].Time)));
+                        };
+                        for (var j = 0; j < objectives[i].AudioSnapshots.length; j++) {
+                            intensity.push(objectives[i].AudioSnapshots[j].Intensity);
+                        };
+                        //var averageintensity = averageCalculator(intensity);
+                        handtospineaudio = [range].concat([intensity]);
+                        handtospineaudiolabels = timeLabeler(handtospineaudiolabels);
+                    };
+                });
+                };
+                var handtospineaudioseries = ['Hand to Hand Distance', 'Audio Intensity'];
+                var handtospineaudiooptions = {
+                    title: {
+                        display: true,
+                        text: 'Hand to Spine Distance and Audio Intensity vs. Time'
+                    },
+                    scales: {
+                        yAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Hand to Spine Distance'
+                            },
+                            id: 'y-axis-1',
+                            type: 'linear',
+                            display: true,
+                            position: 'left'
+                        }, {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Average Audio Intensity'
+                            },
+                            id: 'y-axis-2',
+                            type: 'linear',
+                            display: true,
+                            position: 'right'
+                        }
+                        ],
+                        xAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Time (sec)'
+                            }
+                        }
+                        ]
+                    }
+                };
+                var handtospineaudiooverride = [
+                {
+                    yAxisID: 'y-axis-1',
+                    borderColor: "rgb(226, 93, 151)", //pink
+                    pointBackgroundColor: "rgb(226, 93, 151)", //pink
+
+                    backgroundColor: "rgba(220,220,220,0)", //light grey
+
+                    pointBorderColor: "#fff", //white
+                    pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
+                    pointHoverBackgroundColor: "rgb(226, 93, 151)" //pink
+                    //scaleShowGridLines: false,
+                    //pointDot: false,
+                    //bezierCurve: false
+                }, {
+                    yAxisID: 'y-axis-2',
+                    borderColor: "rgb(213, 223, 61)", //light green
+                    pointBackgroundColor: "rgb(213, 223, 61)", //light green
+
+                    backgroundColor: "rgba(220,220,220,0)", //light grey
+
+                    pointBorderColor: "#fff", //white
+                    pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
+                    pointHoverBackgroundColor: "rgb(213, 223, 61)" //light green
+                }
+                ];
+                return {data: handtospineaudio, labels: handtospineaudiolabels, series: handtospineaudioseries, options: handtospineaudiooptions, override: handtospineaudiooverride};
             };
 
             function precisionPlotGenerator (trialData) {
