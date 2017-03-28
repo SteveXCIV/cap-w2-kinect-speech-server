@@ -7,7 +7,15 @@
 </div>
 
 <div class="row">
-    <div class="col-sm-offset-1 col-sm-10">
+    <div ng-if="error" class="col-sm-offset col-sm-10">
+        <div class="alert alert-danger">
+            <span class="h4">Errors:</span>
+            <ui ng-repeat="e in error">
+                <li>{{e}}</li>
+            </ui>
+        </div>
+    </div>
+    <div ng-if="patient" class="col-sm-offset-1 col-sm-10">
         <ul class="list-group">
             <li ng-repeat="sessionId in patient.sessions" class="list-group-item">
                 <a href="/#!/session/{{sessionId}}">Session {{$index + 1}}</a>
