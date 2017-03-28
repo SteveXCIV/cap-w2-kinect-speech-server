@@ -54,7 +54,12 @@
             }).state('registerPatient', {
                 url: '/patient/new',
                 templateUrl: 'registerPatient.html',
-                controller: 'registerPatientCtrl',
+                controller: 'patientCtrl',
+                resolve: checkLogin
+            }).state('patientsView', {
+                url: '/patient',
+                templateUrl: 'patientView.html',
+                controller: 'patientCtrl',
                 resolve: checkLogin
             }).state('physician', {
                 url: '/physician',

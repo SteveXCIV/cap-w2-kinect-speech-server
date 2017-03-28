@@ -1,5 +1,5 @@
 (function() {
-    function registerPatientController($scope, $location, accountService) {
+    function patientController($scope, $location, accountService) {
         $scope.createdPatient = null;
 
         $scope.getPatientName = function() {
@@ -26,7 +26,11 @@
                     $scope.error = error.data.message;
                 });
         };
+
+        $scope.getPatients = function() {
+            return accountService.getUser().patients;
+        }
     }
 
-    angular.module('ngCapstone').controller('registerPatientCtrl', registerPatientController);
+    angular.module('ngCapstone').controller('patientCtrl', patientController);
 })();
