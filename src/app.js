@@ -218,21 +218,21 @@ export default class {
                 });
         });
 
-        this._app.get(
-            '/api/v1/sessions/:patientId',
-            this._checkPhysician,
-            (req, res) => {
-                if (!req.user.patients.find(e => e._id == req.params.patientId)) {
-                    console.log(`Physician ${req.user._id} is not authorized to access sessions for ${req.params.patientId}.`)
-                    res.redirect(HttpError.UNAUTHORIZED, '/login');
-                    return;
-                }
-                this._sessionService.getSessionsByPatientId(req.params.patientId)
-                    .then(out => {
-                        res.status(out.code)
-                            .json(out.data);
-                    })
-        });
+        // this._app.get(
+        //     '/api/v1/sessions/:patientId',
+        //     this._checkPhysician,
+        //     (req, res) => {
+        //         if (!req.user.patients.find(e => e._id == req.params.patientId)) {
+        //             console.log(`Physician ${req.user._id} is not authorized to access sessions for ${req.params.patientId}.`)
+        //             res.redirect(HttpError.UNAUTHORIZED, '/login');
+        //             return;
+        //         }
+        //         this._sessionService.getSessionsByPatientId(req.params.patientId)
+        //             .then(out => {
+        //                 res.status(out.code)
+        //                     .json(out.data);
+        //             })
+        // });
 
         this._app.get('/api/v1/sessions/:id', (req, res) => {
             let sessionId = req.params.id;
