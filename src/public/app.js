@@ -68,7 +68,7 @@
                     requireLogin: true
                 }
             }).state('session', {
-                url: '/session',
+                url: '/session/{sessionId}',
                 templateUrl: 'session.html',
                 controller: 'sessionCtrl',
                 resolve: checkLogin

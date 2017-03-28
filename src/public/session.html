@@ -2,14 +2,14 @@
 <h3>{{ 'The JSON Object' }}</h3>
 <pre>{{ handtohandaudiolabels | json }}</pre>
 -->
-<header ng-include="'nav.html'"></header><hr><hr><hr>
+<header ng-include="'nav.html'"></header>
 
 <div class="container-fluid">
 	<div class="col-md-9 col-md-push-3">
 
 		<div ng-show="showCalibration == true">
 			<div class="well">
-				<h2>Calibration Data</h2>
+				<h2>Calibration Information</h2>
 				<p><strong>Pointing Zone Radius: </strong>{{ radius }}</p>
 				<p><strong>Pointing Zone Timer: </strong>{{ pointingtimer }}</p>
 				<p><strong>Audio Threshold: </strong>{{ audiothreshold }}</p>
@@ -18,31 +18,31 @@
 
 		<div ng-show="showPrecisionPlot == true">
 			<div class="well">
-				<canvas id="line" class="chart-line" chart-data="precision" chart-labels="precisionlabels" chart-series="precisionseries" chart-options="precisionoptions" chart-dataset-override="precisionoverride" chart-click="onClick"></canvas>
+				<canvas id="line" class="chart-line" chart-data="precisionPlot[trialNumber].data" chart-labels="precisionPlot[trialNumber].labels" chart-series="precisionPlot[trialNumber].series" chart-options="precisionPlot[trialNumber].options" chart-dataset-override="precisionPlot[trialNumber].override" chart-click="onClick"></canvas>
 			</div>
 		</div>
 
 		<div ng-show="showRangePlot == true">
 			<div class="well">
 				<h5 align="center"> {{ "Left Hand" }} </h5>
-				<canvas id="base" class="chart-bubble" chart-data="lefthand" chart-options="rangeoptions" chart-dataset-override="rangeoverride" chart-colors="colors"></canvas>
+				<canvas id="base" class="chart-bubble" chart-data="rangePlot[trialNumber].left" chart-options="rangePlot[trialNumber].options" chart-dataset-override="rangePlot[trialNumber].override" chart-colors="colors"></canvas>
 			</div>
 			<div class="well">
 				<h5 align="center"> {{ "Right Hand" }} </h5>
-				<canvas id="base" class="chart-bubble" chart-data="righthand" chart-options="rangeoptions" chart-colors="colors"></canvas>
+				<canvas id="base" class="chart-bubble" chart-data="rangePlot[trialNumber].right" chart-options="rangePlot[trialNumber].options" chart-colors="colors"></canvas>
 			</div>
 		</div>
 
 		<div ng-show="showSpinePlot == true">
 			<div class="well">
 				<h5 align="center"> {{ "Spine Mid" }} </h5>
-				<canvas id="base" class="chart-bubble" chart-data="spinemid" chart-options="rangeoptions" chart-colors="colors"></canvas>
+				<canvas id="base" class="chart-bubble" chart-data="rangePlot[trialNumber].spinemid" chart-options="rangePlot[trialNumber].options" chart-colors="colors"></canvas>
 			</div>
 		</div>
 
 		<div ng-show="showHandDistancePlot == true">
 			<div class="well">
-				<canvas id="line" class="chart-line" chart-data="handtohandaudio" chart-labels="handtohandaudiolabels" chart-series="handtohandaudioseries" chart-options="handtohandaudiooptions" chart-dataset-override="handtohandaudiooverride" chart-click="onClick"></canvas>
+				<canvas id="line" class="chart-line" chart-data="handtohandaudioPlot[trialNumber].data" chart-labels="handtohandaudioPlot[trialNumber].labels" chart-series="handtohandaudioPlot[trialNumber].series" chart-options="handtohandaudioPlot[trialNumber].options" chart-dataset-override="handtohandaudioPlot[trialNumber].override" chart-click="onClick"></canvas>
 			</div>
 		</div>
 
@@ -58,9 +58,30 @@
 
 	<div class="col-md-3 col-md-pull-9 well">
 		<h1> {{ "Session " + sessionindex + " Breakdown" }} </h1>
+		<p><strong>Session ID: </strong>{{ sessionID }}</p>
 		<p><strong>Date: </strong>{{ start | date }}</p>
 		<p><strong>Time: </strong>{{ start | date: 'shortTime' }}{{ " - " }}{{ end | date: 'shortTime' }}</p>
-		<p><strong>Duration: </strong>{{ duration }}</p>
+		<p><strong>Duration: </strong>{{ duration + ' sec'}}</p>
+
+		<div class="container">
+			<form>
+				<div class="checkbox">
+					<label class="checkbox-inline">
+						<input type="checkbox" value="">Trial 1
+					</label>
+				</div>
+				<div class="checkbox">
+					<label class="checkbox-inline">
+						<input type="checkbox" value="">Trial 2
+					</label>
+				</div>
+				<div class="checkbox">
+					<label class="checkbox-inline">
+						<input type="checkbox" value="">Trial 3
+					</label>
+				</div>
+			</form>
+		</div>
 
 		<div class="btn-group-vertical">
 			<button type="button" class="btn" ng-model="calibration" uib-btn-radio="''" uncheckable ng-click="showCalibration = !showCalibration">Calibration Information</button>

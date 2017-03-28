@@ -1,23 +1,22 @@
 (function() {
-    angular.module('ngCapstone').controller('sessionCtrl', function($scope, sessionFactory) {
+    angular.module('ngCapstone').controller('sessionCtrl', function($scope, sessionFactory, $stateParams) {
 
-        $scope.sessionindex = 3;
-        $scope.righthand = [];
-        $scope.lefthand = [];
-        $scope.spinemid = [];
-        $scope.intensity = [];
-        $scope.range = [];
-        $scope.handtohandaudio = [];
-        $scope.handtohandaudiolabels = [];
-        $scope.precision = [];
-        $scope.precisionlabels = [];
+        $scope.sessionId = $stateParams.sessionId;
+        $scope.sessionindex = 0;
+        $scope.trialNumber = 1;
+        $scope.precisionPlot = [];
+        $scope.handtohandaudioPlot = [];
+        $scope.rangePlot = [];
 
-        sessionFactory.getData().then(function(data) {
+        sessionFactory.getData($scope.sessionId).then(function(data) {
+            //General Session Data
             $scope.sessiondata = data.data[$scope.sessionindex];
             $scope.start = new Date($scope.sessiondata.StartTime)
             $scope.end = new Date($scope.sessiondata.EndTime);
             $scope.duration = msConverter($scope.end - $scope.start);
+            $scope.totalTrials  = $scope.sessiondata.Trials.length;
 
+            //Calibration Data
             $scope.calibration = $scope.sessiondata.CalibrationData;
             $scope.radius = $scope.sessiondata.CalibrationData.Radius;
             $scope.pointingtimer = $scope.sessiondata.CalibrationData.PointingZoneTimerSec;
@@ -25,56 +24,100 @@
             $scope.reachleft = $scope.sessiondata.CalibrationData.MaxReachLeft;
             $scope.audiothreshold = $scope.sessiondata.CalibrationData.AudioThreshold;
 
-            $scope.objectives = $scope.sessiondata.Trials[0].Objectives;
-            for (var i = 0; i < $scope.objectives.length; i++) {
-                angular.forEach($scope.objectives[i], function(value, key) {
+            //Plot Generation per Trial
+            $scope.precisionPlot[$scope.trialNumber] = precisionPlotGenerator($scope.sessiondata.Trials[$scope.trialNumber]);
+            $scope.handtohandaudioPlot[$scope.trialNumber] = handtohandaudioPlotGenerator($scope.sessiondata.Trials[$scope.trialNumber]);
+            $scope.rangePlot[$scope.trialNumber] = rangePlotGenerator($scope.sessiondata.Trials[$scope.trialNumber]);
+
+        }, function(error) {
+            console.log(error);
+        });
+
+        $scope.onClick = function(points, evt) {console.log(points, evt);};
+
+        function msConverter(ms) {
+            var min = Math.floor(ms / 60000);
+            var sec = ((ms % 60000) / 1000).toFixed(0);
+            return min + ":" + (sec < 10
+                ? '0'
+                : '') + sec;
+        };
+
+        function averageCalculator(array) {
+            var sum = 0;
+            for (var a = 0; a < array.length; a++) {
+                sum += array[a];
+            }
+            var average = (sum / array.length);
+            return average;
+        };
+
+        function timeLabeler(timearray) {
+            for(var i = timearray.length; i > 0; i--){
+                if (timearray[i] == timearray[i-1]) {timearray[i] = ''};
+            }
+            timearray[0] = ''; //find a better way to do this
+            return timearray;
+        };
+
+        function PlotGenerator (trialData) {
+            var righthand = [];
+            var lefthand = [];
+            var spinemid = [];
+            var intensity = [];
+            var range = [];
+            var handtohandaudio = [];
+            var handtohandaudiolabels = [];
+            var objectives = trialData.Objectives;
+            for (var i = 0; i < objectives.length; i++) {
+                angular.forEach(objectives[i], function(value, key) {
                     if (key === "kind" && value === "LocateObjective") {
-                        $scope.activationtime = new Date($scope.objectives[i].ActivationTime);
-                        $scope.locatestart = new Date($scope.objectives[i].StartTime);
-                        $scope.locateend = new Date($scope.objectives[i].EndTime);
-                        $scope.reactiontime = msConverter($scope.activationtime - $scope.locatestart);
-                        $scope.locatecompletiontime = msConverter($scope.locateend - $scope.locatestart);
+                        var activationtime = new Date(objectives[i].ActivationTime);
+                        var locatestart = new Date(objectives[i].StartTime);
+                        var locateend = new Date(objectives[i].EndTime);
+                        var reactiontime = msConverter(activationtime - locatestart);
+                        var locatecompletiontime = msConverter(locateend - locatestart);
 
-                        $scope.bodysnapshots = $scope.objectives[i].BodySnapshots;
+                        var bodysnapshots = objectives[i].BodySnapshots;
 
-                        for (j = 0; j < $scope.objectives[i].Distances.length; j++) {
-                            $scope.currenttime = new Date($scope.objectives[i].Distances[j].Time);
-                            if ($scope.currenttime > $scope.activationtime && $scope.currenttime < $scope.locateend) {
-                                $scope.precisionlabels.push(msConverter($scope.currenttime - new Date($scope.objectives[i].Distances[0].Time)));
-                                $scope.precision.push($scope.objectives[i].Distances[j].Distance);
+                        for (j = 0; j < objectives[i].Distances.length; j++) {
+                            var currenttime = new Date(objectives[i].Distances[j].Time);
+                            if (currenttime >= activationtime && currenttime <= locateend) {
+                                precisionlabels.push(msConverter(currenttime - new Date(activationtime)));
+                                precision.push(objectives[i].Distances[j].Distance);
                             };
                         };
-                        $scope.precision = [$scope.precision];
-                        $scope.precisionlabels = timeLabeler($scope.precisionlabels);
-                        $scope.precisionseries = ['Hand to Object Distance'];
+                        precision = [precision];
+                        precisionlabels = timeLabeler(precisionlabels);
+                        var precisionseries = ['Hand to Object Distance'];
 
-                        for (var s = 0; s < $scope.bodysnapshots.length; s++) {
+                        for (var s = 0; s < bodysnapshots.length; s++) {
                             for (var j = 0; j < 15; j++) {
-                                angular.forEach($scope.bodysnapshots[s].Joints[j], function(value, key) {
+                                angular.forEach(bodysnapshots[s].Joints[j], function(value, key) {
                                     if (key === "JointType" && value === "HandRight") {
-                                    	$scope.righthand.push([
+                                        righthand.push([
                                             {
-                                                x: $scope.bodysnapshots[s].Joints[j].X,
-                                                y: $scope.bodysnapshots[s].Joints[j].Y,
-                                                r: (($scope.bodysnapshots[s].Joints[j].Z) - 1.2) * 5
+                                                x: bodysnapshots[s].Joints[j].X,
+                                                y: bodysnapshots[s].Joints[j].Y,
+                                                r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
                                             }
                                         ]);
                                     };
                                     if (key === "JointType" && value === "HandLeft") {
-                                        $scope.lefthand.push([
+                                        lefthand.push([
                                             {
-                                                x: $scope.bodysnapshots[s].Joints[j].X,
-                                                y: $scope.bodysnapshots[s].Joints[j].Y,
-                                                r: (($scope.bodysnapshots[s].Joints[j].Z) - 1.2) * 5
+                                                x: bodysnapshots[s].Joints[j].X,
+                                                y: bodysnapshots[s].Joints[j].Y,
+                                                r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
                                             }
                                         ]);
                                     };
                                     if (key === "JointType" && value === "SpineMid") {
-                                        $scope.spinemid.push([
+                                        spinemid.push([
                                             {
-                                                x: $scope.bodysnapshots[s].Joints[j].X,
-                                                y: $scope.bodysnapshots[s].Joints[j].Y,
-                                                r: (($scope.bodysnapshots[s].Joints[j].Z) - 1.2) * 5
+                                                x: bodysnapshots[s].Joints[j].X,
+                                                y: bodysnapshots[s].Joints[j].Y,
+                                                r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
                                             }
                                         ]);
                                     };
@@ -84,201 +127,269 @@
 
                     };
                     if (key === "kind" && value === "DescribeObjective") {
-                        $scope.describestart = new Date($scope.objectives[i].StartTime);
-                        $scope.describeend = new Date($scope.objectives[i].EndTime);
-                        $scope.describecompletiontime = msConverter($scope.locateend - $scope.locatestart);
-                        for (var j = 0; j < $scope.objectives[i].Distances.length; j++) {
-                            $scope.range.push($scope.objectives[i].Distances[j].HandToHandDistance);
-                            $scope.currenttime = new Date($scope.objectives[i].Distances[j].Time);
-                            $scope.handtohandaudiolabels.push(msConverter($scope.currenttime - new Date($scope.objectives[i].Distances[0].Time)));
+                        var describestart = new Date(objectives[i].StartTime);
+                        var describeend = new Date(objectives[i].EndTime);
+                        var describecompletiontime = msConverter(describeend - describestart);
+                        for (var j = 0; j < objectives[i].Distances.length; j++) {
+                            range.push(objectives[i].Distances[j].HandToHandDistance);
+                            var currenttime = new Date(objectives[i].Distances[j].Time);
+                            handtohandaudiolabels.push(msConverter(currenttime - new Date(objectives[i].Distances[0].Time)));
                         };
-                        for (var j = 0; j < $scope.objectives[i].AudioSnapshots.length; j++) {
-                            $scope.intensity.push($scope.objectives[i].AudioSnapshots[j].Intensity);
+                        for (var j = 0; j < objectives[i].AudioSnapshots.length; j++) {
+                            intensity.push(objectives[i].AudioSnapshots[j].Intensity);
                         };
-                        $scope.averageintensity = averageCalculator($scope.intensity);
-                        $scope.handtohandaudio = [$scope.range].concat([$scope.intensity]);
-                        $scope.handtohandaudiolabels = timeLabeler($scope.handtohandaudiolabels);
-                        $scope.handtohandaudioseries = ['Hand to Hand Distance', 'Audio Intensity'];
+                        var averageintensity = averageCalculator(intensity);
+                        handtohandaudio = [range].concat([intensity]);
+                        handtohandaudiolabels = timeLabeler(handtohandaudiolabels);
+                        var handtohandaudioseries = ['Hand to Hand Distance', 'Audio Intensity'];
 
                     };
                 });
             };
-        }, function(error) {
-            console.log(error);
-        });
-
-        $scope.precisionoverride = [
-            {
-                yAxisID: 'yaxis',
-                borderColor: "rgb(4, 141, 183)", //blue
-                pointBackgroundColor: "rgb(4, 141, 183)", //blue
-                backgroundColor: "rgba(220,220,220,0)", //light grey
-                pointBorderColor: "#fff", //white
-                pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
-                pointHoverBackgroundColor: "rgb(4, 141, 183)" //blue
-            }
-        ];
-        $scope.precisionoptions = {
-            title: {
-                display: true,
-                text: 'Hand to Object Distance vs. Time'
-            },
-            scales: {
-                yAxes: [
-                    {
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Hand to Hand Distance'
-                        },
-                        id: 'yaxis',
-                        type: 'linear',
-                        display: true,
-                        position: 'left'
-                    }
-                ]/*,
-                xAxes: [
-                    {
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Time (ms)'
-                        },
-                        id: 'x-axis-1',
-                        type: 'linear',
-                        display: true,
-                        position: 'bottom'
-                    }
-                ]*/
-            }
+            return {data: precision, labels: precisionlabels, series: precisionseries, options: precisionoptions, override: precisionoverride};
         };
 
-		/*function overrideDefiner(yaxisnumber, maincolor) {
-			overridearray.push({});
-			return [overridearray];
-		}*/
-
-        $scope.handtohandaudiooverride = [
-            {
-                yAxisID: 'y-axis-1',
-                borderColor: "rgb(4, 141, 183)", //blue
-                pointBackgroundColor: "rgb(4, 141, 183)", //blue
-
-                backgroundColor: "rgba(220,220,220,0)", //light grey
-
-                pointBorderColor: "#fff", //white
-                pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
-                pointHoverBackgroundColor: "rgb(4, 141, 183)" //blue
-                //scaleShowGridLines: false,
-                //pointDot: false,
-                //bezierCurve: false
-            }, {
-                yAxisID: 'y-axis-2',
-                borderColor: "rgb(213, 223, 61)", //light green
-                pointBackgroundColor: "rgb(213, 223, 61)", //light green
-
-                backgroundColor: "rgba(220,220,220,0)", //light grey
-
-                pointBorderColor: "#fff", //white
-                pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
-                pointHoverBackgroundColor: "rgb(213, 223, 61)" //light green
-            }
-        ];
-        $scope.handtohandaudiooptions = {
-            title: {
-                display: true,
-                text: 'Hand to Hand Distance and Audio Intensity vs. Time'
-            },
-            scales: {
-                yAxes: [
-                    {
-                        scaleLabel: {
+        function rangePlotGenerator (trialData) {
+            var righthand = [];
+            var lefthand = [];
+            var spinemid = [];
+            var objectives = trialData.Objectives;
+            for (var i = 0; i < objectives.length; i++) {
+                angular.forEach(objectives[i], function(value, key) {
+                    if (key === "kind" && value === "LocateObjective") {
+                        var bodysnapshots = objectives[i].BodySnapshots;
+                        for (var s = 0; s < bodysnapshots.length; s++) {
+                            for (var j = 0; j < 15; j++) {
+                                angular.forEach(bodysnapshots[s].Joints[j], function(value, key) {
+                                    if (key === "JointType" && value === "HandRight") {
+                                        righthand.push([
+                                            {
+                                                x: bodysnapshots[s].Joints[j].X,
+                                                y: bodysnapshots[s].Joints[j].Y,
+                                                r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
+                                            }
+                                        ]);
+                                    };
+                                    if (key === "JointType" && value === "HandLeft") {
+                                        lefthand.push([
+                                            {
+                                                x: bodysnapshots[s].Joints[j].X,
+                                                y: bodysnapshots[s].Joints[j].Y,
+                                                r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
+                                            }
+                                        ]);
+                                    };
+                                    if (key === "JointType" && value === "SpineMid") {
+                                        spinemid.push([
+                                            {
+                                                x: bodysnapshots[s].Joints[j].X,
+                                                y: bodysnapshots[s].Joints[j].Y,
+                                                r: ((bodysnapshots[s].Joints[j].Z) - 1.2) * 5
+                                            }
+                                        ]);
+                                    };
+                                });
+                            };
+                        };
+                    };
+                });
+            };
+            var rangeoptions = {
+                title: {
+                    display: true,
+                    text: 'Range of Motion'
+                },
+                scales: {
+                    yAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Vertical Position'
+                            },
+                            id: 'y-axis',
+                            type: 'linear',
                             display: true,
-                            labelString: 'Hand to Hand Distance'
-                        },
-                        id: 'y-axis-1',
-                        type: 'linear',
-                        display: true,
-                        position: 'left'
-                    }, {
-                        scaleLabel: {
+                            position: 'left'
+                        }
+                    ],
+                    xAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Lateral Position'
+                            },
+                            id: 'x-axis',
+                            type: 'linear',
                             display: true,
-                            labelString: 'Average Audio Intensity'
-                        },
-                        id: 'y-axis-2',
-                        type: 'linear',
-                        display: true,
-                        position: 'right'
-                    }
-                ]
-            }
+                            position: 'bottom'
+                        }
+                    ]
+
+                }
+            };
+            var rangeoverride = [
+                {
+                    backgroundColor: "#FF6384"
+                }, {
+                    hoverBackgroundColor: "#FF6384"
+                }
+            ];
+            return {right: righthand, left: lefthand, spinemid: spinemid, options: rangeoptions, override: rangeoverride};
         };
 
-        $scope.rangeoverride = [
-            {
-                backgroundColor: "#FF6384"
-            }, {
-                hoverBackgroundColor: "#FF6384"
-            }
-        ];
-        $scope.rangeoptions = {
-            title: {
-                display: true,
-                text: 'Range of Motion'
-            },
-            scales: {
-                yAxes: [
-                    {
-                        scaleLabel: {
+        function handtohandaudioPlotGenerator (trialData) {
+            var intensity = []; var range = [];
+            var handtohandaudio = []; var handtohandaudiolabels = [];
+            var objectives = trialData.Objectives;
+            for (var i = 0; i < objectives.length; i++) {
+                angular.forEach(objectives[i], function(value, key) {
+                    if (key === "kind" && value === "DescribeObjective") {
+                        //var describestart = new Date(objectives[i].StartTime);
+                        //var describeend = new Date(objectives[i].EndTime);
+                        //var describecompletiontime = msConverter(describeend - describestart);
+                        for (var j = 0; j < objectives[i].Distances.length; j++) {
+                            range.push(objectives[i].Distances[j].HandToHandDistance);
+                            var currenttime = new Date(objectives[i].Distances[j].Time);
+                            handtohandaudiolabels.push(msConverter(currenttime - new Date(objectives[i].Distances[0].Time)));
+                        };
+                        for (var j = 0; j < objectives[i].AudioSnapshots.length; j++) {
+                            intensity.push(objectives[i].AudioSnapshots[j].Intensity);
+                        };
+                        //var averageintensity = averageCalculator(intensity);
+                        handtohandaudio = [range].concat([intensity]);
+                        handtohandaudiolabels = timeLabeler(handtohandaudiolabels);
+                    };
+                });
+            };
+            var handtohandaudioseries = ['Hand to Hand Distance', 'Audio Intensity'];
+            var handtohandaudiooptions = {
+                title: {
+                    display: true,
+                    text: 'Hand to Hand Distance and Audio Intensity vs. Time'
+                },
+                scales: {
+                    yAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Hand to Hand Distance'
+                            },
+                            id: 'y-axis-1',
+                            type: 'linear',
                             display: true,
-                            labelString: 'Vertical Position'
-                        },
-                        id: 'y-axis',
-                        type: 'linear',
-                        display: true,
-                        position: 'left'
-                    }
-                ],
-                xAxes: [
-                    {
-                        scaleLabel: {
+                            position: 'left'
+                        }, {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Average Audio Intensity'
+                            },
+                            id: 'y-axis-2',
+                            type: 'linear',
                             display: true,
-                            labelString: 'Lateral Position'
-                        },
-                        id: 'x-axis',
-                        type: 'linear',
-                        display: true,
-                        position: 'bottom'
-                    }
-                ]
+                            position: 'right'
+                        }
+                    ],
+                    xAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Time (sec)'
+                            }
+                        }
+                    ]
+                }
+            };
+            var handtohandaudiooverride = [
+                {
+                    yAxisID: 'y-axis-1',
+                    borderColor: "rgb(4, 141, 183)", //blue
+                    pointBackgroundColor: "rgb(4, 141, 183)", //blue
 
-            }
+                    backgroundColor: "rgba(220,220,220,0)", //light grey
+
+                    pointBorderColor: "#fff", //white
+                    pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
+                    pointHoverBackgroundColor: "rgb(4, 141, 183)" //blue
+                    //scaleShowGridLines: false,
+                    //pointDot: false,
+                    //bezierCurve: false
+                }, {
+                    yAxisID: 'y-axis-2',
+                    borderColor: "rgb(213, 223, 61)", //light green
+                    pointBackgroundColor: "rgb(213, 223, 61)", //light green
+
+                    backgroundColor: "rgba(220,220,220,0)", //light grey
+
+                    pointBorderColor: "#fff", //white
+                    pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
+                    pointHoverBackgroundColor: "rgb(213, 223, 61)" //light green
+                }
+            ];
+            return {data: handtohandaudio, labels: handtohandaudiolabels, series: handtohandaudioseries, options: handtohandaudiooptions, override: handtohandaudiooverride};
         };
 
-        function msConverter(ms) {
-            var min = Math.floor(ms / 60000);
-            var sec = ((ms % 60000) / 1000).toFixed(0);
-            return min + ":" + (sec < 10
-                ? '0'
-                : '') + sec;
-        }
-
-        function averageCalculator(array) {
-            var sum = 0;
-            for (var a = 0; a < array.length; a++) {
-                sum += array[a];
-            }
-            var average = (sum / array.length);
-            return average;
-        }
-
-		function timeLabeler(timearray) {
-			for(var i = 0; i < timearray.length-1; i++){
-				if (timearray[i] == timearray[i+1]) {timearray[i] = ''};
-			}
-			timearray[timearray.length-1] = ''; //find a better way to do this
-			return timearray;
-		}
-
-        $scope.onClick = function(points, evt) {console.log(points, evt);};
+        function precisionPlotGenerator (trialData) {
+            var precision = []; var precisionlabels = [];
+            var objectives = trialData.Objectives;
+            for (var i = 0; i < objectives.length; i++) {
+                angular.forEach(objectives[i], function(value, key) {
+                    if (key === "kind" && value === "LocateObjective") {
+                        var activationtime = new Date(objectives[i].ActivationTime);
+                        var locateend = new Date(objectives[i].EndTime);
+                        for (var j = 0; j < objectives[i].Distances.length; j++) {
+                            var currenttime = new Date(objectives[i].Distances[j].Time);
+                            if (currenttime >= activationtime && currenttime <= locateend) {
+                                precisionlabels.push(msConverter(currenttime - new Date(activationtime)));
+                                precision.push(objectives[i].Distances[j].Distance);
+                            };
+                        };
+                        precision = [precision];
+                        precisionlabels = timeLabeler(precisionlabels);
+                    };
+                });
+            };
+            var precisionseries = ['Hand to Object Distance'];
+            var precisionoptions = {
+                title: {
+                    display: true,
+                    text: 'Hand to Object Distance vs. Time'
+                },
+                scales: {
+                    yAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Hand to Object Distance'
+                            },
+                            id: 'yaxis',
+                            type: 'linear',
+                            display: true,
+                            position: 'left'
+                        }
+                    ],
+                    xAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Time (sec)'
+                            }
+                        }
+                    ]
+                }
+            };
+            var precisionoverride = [
+                {
+                    yAxisID: 'yaxis',
+                    borderColor: "rgb(4, 141, 183)", //blue
+                    pointBackgroundColor: "rgb(4, 141, 183)", //blue
+                    backgroundColor: "rgba(220,220,220,0)", //light grey
+                    pointBorderColor: "#fff", //white
+                    pointHoverBorderColor: "rgba(220,220,220,0)", //light grey
+                    pointHoverBackgroundColor: "rgb(4, 141, 183)" //blue
+                }
+            ];
+            return {data: precision, labels: precisionlabels, series: precisionseries, options: precisionoptions, override: precisionoverride};
+        };
 
     });
 })();
