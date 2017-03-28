@@ -1,0 +1,21 @@
+<header ng-include="'nav.html'"></header>
+
+<div class="row">
+    <div class="col-sm-offset-1 col-sm-10">
+        <h3>{{patient.firstName}} {{patient.lastName}}</h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-1 col-sm-10">
+        <ul class="list-group">
+            <li ng-repeat="sessionId in patient.sessions" class="list-group-item">
+                <a href="/#!/session/{{sessionId}}">Session {{$index + 1}}</a>
+            </li>
+            <li ng-if="patient.sessions.length == 0" class="list-group-item text-danger">
+                <i class="fa fa-exclamation-circle"></i>
+                {{patient.firstName}} {{patient.lastName}} has no sessions!
+            </li>
+        </ul>
+    </div>
+</div>

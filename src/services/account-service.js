@@ -56,6 +56,7 @@ export default class {
     getPatientById(patientId) {
         return this._patientModel
             .findById(patientId)
+            .then(p => p._doc)
             .then(this._generalize)
             .then(createNotFoundOrElse, createErrorWrapperMessage);
     }

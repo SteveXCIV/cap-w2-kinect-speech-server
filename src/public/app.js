@@ -56,6 +56,11 @@
                 templateUrl: 'registerPatient.html',
                 controller: 'patientCtrl',
                 resolve: checkLogin
+            }).state('viewPatient', {
+                url: '/patient/{patientId}',
+                templateUrl: 'viewPatient.html',
+                controller: 'patientViewCtrl',
+                resole: checkLogin
             }).state('dashboard', {
                 url: '/home',
                 templateUrl: 'dashboard.html',

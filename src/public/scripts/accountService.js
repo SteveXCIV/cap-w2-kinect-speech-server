@@ -32,7 +32,12 @@
             return $http.post('/api/v1/register/patient', req);
         }
 
+        function getPatient(patientId) {
+            return $http.get('/api/v1/patient/' + patientId);
+        }
+
         return {
+            getPatient: getPatient,
             getUser: getUser,
             login: login,
             register: register,
