@@ -23,10 +23,20 @@
             return $http.post('/api/v1/register/physician', req);
         }
 
+        function registerPatient(email, firstName, lastName) {
+            let req = {
+                email: email,
+                firstName: firstName,
+                lastName: lastName
+            };
+            return $http.post('/api/v1/register/patient', req);
+        }
+
         return {
             getUser: getUser,
             login: login,
-            register: register
+            register: register,
+            registerPatient: registerPatient
         };
     }
 

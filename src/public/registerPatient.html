@@ -1,0 +1,84 @@
+<header ng-include="'nav.html'"></header>
+
+<div class="row">
+    <div class="col-sm-offset-1 col-sm-10">
+        <h3>New Patient</h3>
+        <hr />
+    </div>
+</div>
+
+<div class="row" ng-if="createdPatient">
+    <div class="col-sm-offset-1 col-sm-10">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <i class="fa fa-check-circle-o"></i>
+                Account Created
+            </div>
+            <div class="panel-body">
+                <p>
+                    A new account has been created for <strong>{{getPatientName()}}</strong>.
+                </p>
+                <span class="h4">
+                    <i class="fa fa-exclamation-circle"></i>
+                    Temporary Password
+                </span>
+                <p>
+                    This account the temporary password <strong>{{getTempPass()}}</strong>, please move it somewhere
+                    secure, it will not be accessible after you close this page.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form class="form-horizontal" name="form" ng-submit="register()" role="form">
+    <div class="form-group">
+        <label class="col-sm-4 control-label" for="firstName">
+            <i class="fa fa-user-circle-o"></i>
+            First name
+        </label>
+        <div class="col-sm-4">
+            <input type="text" name="firstName" ng-model="firstName" required class="form-control">
+            <span ng-show="form.firstName.$dirty && form.firstName.$error.required" class="help-block">First name is required</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-4 control-label" for="lastName">
+            <i class="fa fa-user-circle-o"></i>
+            Last name
+        </label>
+        <div class="col-sm-4">
+            <input type="text" name="lastName" ng-model="lastName" required class="form-control">
+            <span ng-show="form.lastName.$dirty && form.lastName.$error.required" class="help-block">Last name is required</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-4 control-label" for="email">
+            <i class="fa fa-envelope-o"></i>
+            Email
+        </label>
+        <div class="col-sm-4">
+            <input type="text" name="email" ng-model="email" required class="form-control">
+            <span ng-show="form.email.$dirty && form.email.$error.required" class="help-block">Email is required</span>
+        </div>
+    </div>
+    <div ng-if="error" class="form-group">
+        <div class="col-sm-offset-4 col-sm-4">
+            <div class="alert alert-danger">
+                <span class="h4">Errors:</span>
+                <ui ng-repeat="e in error">
+                    <li>{{e}}</li>
+                </ui>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-4">
+            <div class="pull-right">
+                <button type="submit" ng-disabled="form.$invalid || dataLoading" class="btn btn-success">Create</button>
+                <a class="btn btn-default" ui-sref="dashboard">Cancel</a>
+                <span class="fa fa-spinner fa-spin" ng-if="dataLoading"></span>
+            </div>
+        </div>
+    </div>
+</form>

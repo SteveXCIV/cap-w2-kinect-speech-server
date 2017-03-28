@@ -51,14 +51,16 @@
                 data: {
                     requireLogin: false
                 }
-            }).state('physician', {
-                url: '/physician',
-                templateUrl: 'physician.html',
-                controller: 'physicianCtrl',
-                resolve: checkLogin,
-                data: {
-                    requireLogin: true,
-                }
+            }).state('registerPatient', {
+                url: '/patient/new',
+                templateUrl: 'registerPatient.html',
+                controller: 'patientCtrl',
+                resolve: checkLogin
+            }).state('dashboard', {
+                url: '/home',
+                templateUrl: 'dashboard.html',
+                controller: 'dashboardCtrl',
+                resolve: checkLogin
             }).state('player', {
                 url: '/player',
                 templateUrl: 'player.html',

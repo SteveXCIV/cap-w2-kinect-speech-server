@@ -5,7 +5,7 @@
             accountService.login($scope.email, $scope.password)
                 .then(function(response) {
                     $scope.dataLoading = false;
-                    $location.url('/physician');
+                    $location.url('/home');
                 }, function(error) {
                     $scope.dataLoading = false;
                     let errMsg = [];
