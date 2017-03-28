@@ -179,6 +179,22 @@ export default class {
             res.status(HttpError.OK)
                 .send('');
         });
+
+        this._app.get(
+            '/api/v1/patient/:patientId',
+            this._checkPhysician,
+            (req, res) => {
+                if (!req.user.patients.find(e => e._id == req.params.patientId)) {
+                    console.log(`Physician ${req.user._id} is not authorized to access sessions for ${req.params.patientId}.`)
+                    res.redirect(HttpError.UNAUTHORIZED, '/login');
+                    return;
+                }
+                this._accountService.getPatientById(req.params.patientId)
+                    .then(out => {
+                        res.status(out.code)
+                            .json(out.data);
+                    });
+            });
     }
 
     _checkPatient(req, res, next) {
