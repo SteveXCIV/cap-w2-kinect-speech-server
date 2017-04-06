@@ -4,7 +4,6 @@
 -->
 <header ng-include="'nav.html'"></header>
 
-<hr>
 <div class="container-fluid">
 	<div class="col-md-9 col-md-push-3">
 
@@ -13,7 +12,6 @@
 				<h2>Calibration Information</h2>
 				<p><strong>Pointing Zone Radius: </strong>{{ radius }}</p>
 				<p><strong>Pointing Zone Timer: </strong>{{ pointingtimer }}</p>
-				<p><strong>Audio Threshold: </strong>{{ audiothreshold }}</p>
 			</div>
 		</div>
 
@@ -26,11 +24,11 @@
 		<div ng-show="showRangePlot == true" ng-repeat="trialNumber in selectedTrials">
 			<div class="well">
 				<h5 align="center"> {{ "Left Hand" }} </h5>
-				<canvas id="base" class="chart-bubble" chart-data="rangePlot[trialNumber].left" chart-options="rangePlot[trialNumber].options" chart-dataset-override="rangePlot[trialNumber].override" chart-colors="colors"></canvas>
+				<canvas id="base" class="chart-bubble" chart-data="rangePlot[trialNumber].left" chart-options="rangePlot[trialNumber].options" chart-colors="rangePlot[trialNumber].leftcolors"></canvas>
 			</div>
 			<div class="well">
 				<h5 align="center"> {{ "Right Hand" }} </h5>
-				<canvas id="base" class="chart-bubble" chart-data="rangePlot[trialNumber].right" chart-options="rangePlot[trialNumber].options" chart-colors="colors"></canvas>
+				<canvas id="base" class="chart-bubble" chart-data="rangePlot[trialNumber].right" chart-options="rangePlot[trialNumber].options" chart-colors="rangePlot[trialNumber].rightcolors"></canvas>
 			</div>
 		</div>
 
@@ -87,9 +85,9 @@
 
 			<button type="button" class="btn" ng-model="locate" uib-btn-radio="''" uncheckable ng-click="showLocatePlots = !showLocatePlots">Locate Objective Data</button>
 			
-			<button type="button" class="btn btn-default" ng-model="precisionmodel" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showPrecisionPlot = !showPrecisionPlot; getAllSelected()">Precision</button>
+			<button type="button" class="btn btn-default" ng-model="precisionmodel" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showPrecisionPlot = !showPrecisionPlot; getAllSelected()">Hand to Object</button>
 			<button type="button" class="btn btn-default" ng-model="range" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showRangePlot = !showRangePlot; getAllSelected()">Range of Motion</button>
-			<button type="button" class="btn btn-default" ng-model="deviation" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showSpinePlot = !showSpinePlot; getAllSelected()">Spinal Deviation</button>
+			<!--<button type="button" class="btn btn-default" ng-model="deviation" uib-btn-radio="''" uncheckable ng-show="showLocatePlots == true" ng-click="showSpinePlot = !showSpinePlot; getAllSelected()">Spinal Deviation</button>-->
 
 			<button type="button" class="btn" ng-model="describe" uib-btn-radio="''" uncheckable ng-click="showDescribePlots = !showDescribePlots">Describe Objective Data</button>
 
