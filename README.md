@@ -2,6 +2,10 @@
 
 **Build Status:** [![Build Status](https://travis-ci.com/SteveXCIV/cap-w2-kinect-speech-server.svg?token=mNXcSSLvdYEyeQMicDAc&branch=master)](https://travis-ci.com/SteveXCIV/cap-w2-kinect-speech-server)
 
+## About
+
+This is the server component of Engineering Capstone Spring 2017 Group W2 at Northeastern University. Our project was to prototype a game and associated server to collect speech and physical therapy data from Cerebral Palsy patients.
+
 ## Getting Started
 
 This section contains everything needed to get started with the server component.
